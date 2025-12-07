@@ -42,25 +42,28 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK")
 HISTORY_FILE = "history.json"
 HEARTBEAT_INTERVAL = 86400  # 24 Hours
 
-# --- 2. SMART LINK GENERATOR (Fixed for 7:30 AM) ---
+# --- 2. SMART LINK GENERATOR (Fixed) ---
 
 def generate_commute_link(origin_lat, origin_lon):
     """
-    Generates a Google Maps URL set to Public Transit (dirflg=r)
-    for Tomorrow at 07:30 AM (ttype=dep).
+    Generates a Standard Google Maps URL set to Public Transit (dirflg=r)
+    for Tomorrow at 07:30 AM.
     """
-    # Calculate "Tomorrow"
+    # 1. Calculate "Tomorrow"
     now = datetime.now()
     tomorrow = now + timedelta(days=1)
     date_str = tomorrow.strftime("%Y-%m-%d") # e.g. 2023-10-27
     
-    # URL Encoding
+    # 2. URL Encoding
     dest = urllib.parse.quote(DESTINATION_ADDRESS)
     
-    # Construct the "Classic" Maps Link
-    # dirflg=r  => Public Transit
+    # 3. Construct the Standard Link
+    # saddr = Start Address (Housing GPS)
+    # daddr = Destination Address
+    # dirflg=r  => Public Transit (Rail/Bus/Metro)
     # ttype=dep => Departure Time
-    # time=07:30 => 7:30 AM
+    # date & time => The specific slot
+    
     link = f"https://www.google.com/maps?saddr={origin_lat},{origin_lon}&daddr={dest}&dirflg=r&ttype=dep&date={date_str}&time=07:30"
     
     return link
