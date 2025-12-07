@@ -3,10 +3,10 @@ import json
 import os
 import time
 
-# --- 1. SEARCH CONFIGURATION ---
+# --- CONFIGURATION ---
 SEARCH_URL = "https://trouverunlogement.lescrous.fr/api/fr/search/42" 
 
-# Your Working Payload (from your last message)
+# Your Working Payload
 PAYLOAD = {
   "idTool": 42,
   "need_aggregation": True,
@@ -33,70 +33,92 @@ HEADERS = {
     'Content-Type': 'application/json'
 }
 
-# --- 2. DISCORD SETUP ---
-# It tries to get the secret from GitHub, or uses a placeholder for local testing
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1447334660756471948/LQ917jr04ZmwRdLYcOvtOrNLgvaxlfgsY-7QQVyCGN3DOSbjgGfBEVbb0gWQ1CGVLYz7"
+DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK")
+HISTORY_FILE = "history.json"
 
-# UNCOMMENT THE NEXT LINE FOR LOCAL TESTING ONLY (Paste your webhook url)
-# DISCORD_WEBHOOK_URL = "YOUR_DISCORD_WEBHOOK_HERE"
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, "r") as f:
+            return json.load(f)
+    return []
+
+def save_history(ids_list):
+    with open(HISTORY_FILE, "w") as f:
+        json.dump(ids_list, f)
 
 def send_discord_alert(housing_list):
     if not DISCORD_WEBHOOK_URL:
-        print("No Discord Webhook found. Check your Secrets.")
         return
 
-    print(f"🚀 Sending alerts for {len(housing_list)} rooms...")
+    print(f"🚀 Sending alerts for {len(housing_list)} NEW rooms...")
 
     for housing in housing_list:
-        # 1. Extract Title (Residence Name + Room Type)
         residence = housing.get("residence", {}).get("label", "Unknown Residence")
         room_type = housing.get("label", "Logement")
         title = f"{residence} - {room_type}"
-
-        # 2. Extract Price (Price is usually in cents, e.g. 26000 = 260.00)
+        
         try:
             price_cents = housing.get("occupationModes", [{}])[0].get("rent", {}).get("min", 0)
             price = f"{price_cents / 100}€"
         except:
             price = "Price Unknown"
 
-        # 3. Extract ID and Link
         housing_id = housing.get("id")
         url = f"https://trouverunlogement.lescrous.fr/tools/{PAYLOAD["idTool"]}/accommodations/{housing_id}"
 
-        # 4. Create Message
         data = {
-            "content": f"🚨 **CROUS ALERT!** 🚨\n**{title}**\n💰 Price: {price}\n📍 [Click here to view]({url})"
+            "content": f"🚨 **NEW LISTING!** 🚨\n**{title}**\n💰 Price: {price}\n📍 [Click here to view]({url})"
         }
         
         try:
             requests.post(DISCORD_WEBHOOK_URL, json=data)
-            time.sleep(1) # Wait 1 second between messages to be safe
+            time.sleep(1) 
         except Exception as e:
             print(f"Failed to send Discord alert: {e}")
 
 def check_crous():
-    print(f"Checking URL: {SEARCH_URL}")
+    print("--- STARTING CHECK ---")
     
+    # 1. Load the Memory
+    seen_ids = load_history()
+    print(f"Loaded {len(seen_ids)} previously seen IDs.")
+
     try:
         response = requests.post(SEARCH_URL, json=PAYLOAD, headers=HEADERS)
-        
         if response.status_code != 200:
-            print(f"❌ Error {response.status_code}: {response.text[:200]}")
+            print(f"❌ Error {response.status_code}")
             return
 
         data = response.json()
-        
-        # --- CORRECT EXTRACTION LOGIC ---
-        # Based on the JSON you provided: data['results']['items']
         results = data.get("results", {}).get("items", [])
         
-        if len(results) > 0:
-            print(f"✅ FOUND {len(results)} LISTINGS! Sending alerts...")
-            send_discord_alert(results)
-        else:
-            print("No listings found (List is empty).")
+        # 2. Filter for NEW items only
+        new_items = []
+        current_ids = []
+
+        for item in results:
+            item_id = item.get("id")
+            current_ids.append(item_id) # We keep track of everything currently online
             
+            # If this ID is NOT in our history, it's new!
+            if item_id not in seen_ids:
+                new_items.append(item)
+
+        # 3. Handle Results
+        if len(new_items) > 0:
+            print(f"✅ Found {len(new_items)} NEW listings!")
+            send_discord_alert(new_items)
+            
+            # 4. Update History (Add new IDs to the known list)
+            # We combine old history + new finds
+            updated_history = list(set(seen_ids + current_ids))
+            save_history(updated_history)
+            print("History updated.")
+        else:
+            print("No new listings (duplicates ignored).")
+            # We still save current IDs to keep history fresh
+            save_history(list(set(seen_ids + current_ids)))
+
     except Exception as e:
         print(f"Script crashed: {e}")
 

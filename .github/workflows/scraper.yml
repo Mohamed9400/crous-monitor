@@ -1,0 +1,38 @@
+name: Check CROUS with Memory
+
+on:
+  schedule:
+    - cron: '*/1 * * * *' # Every 15 minutes
+  workflow_dispatch: # Allows manual test
+
+permissions:
+  contents: write # <--- CRITICAL: Allows the bot to save the history file
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install libraries
+        run: pip install requests
+
+      - name: Run Scraper
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: python main.py
+
+      - name: Save History
+        # Only run this if the history.json file actually changed
+        run: |
+          git config --global user.name "CROUS Bot"
+          git config --global user.email "bot@noreply.github.com"
+          git add history.json
+          git commit -m "Update housing history [skip ci]" || echo "No changes to commit"
+          git push
