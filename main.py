@@ -42,13 +42,12 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK")
 HISTORY_FILE = "history.json"
 HEARTBEAT_INTERVAL = 86400  # 24 Hours
 
-# --- 2. SMART LINK GENERATOR (The Fix) ---
+# --- 2. SMART LINK GENERATOR (STANDARD VERSION) ---
 
 def generate_commute_link(origin_lat, origin_lon):
     """
-    Generates a Universal Google Maps URL.
-    - Forces Public Transit (travelmode=transit)
-    - Sets Departure Time to the next 7:30 AM (departure_time=TIMESTAMP)
+    Generates an OFFICIAL Google Maps URL (No redirects).
+    Forces Public Transit mode for the next 7:30 AM.
     """
     # 1. Calculate "Next 7:30 AM"
     now = datetime.now()
@@ -58,20 +57,26 @@ def generate_commute_link(origin_lat, origin_lon):
     if target_time < now:
         target_time += timedelta(days=1)
         
-    # 2. Convert to Unix Timestamp (Required by Google Maps URL)
-    # This gives an integer like 1735626600
+    # 2. Convert to Unix Timestamp (Required for the URL)
     timestamp = int(target_time.timestamp())
 
-    # 3. Encode Destination safely
+    # 3. Encode Destination
     dest_encoded = urllib.parse.quote(DESTINATION_ADDRESS)
 
-    # 4. Build the Official Universal Link
-    # api=1 -> Forces the map app to handle the parameters
-    # origin -> The housing GPS
-    # destination -> Vallourec
-    # travelmode=transit -> Public Transport
-    # departure_time -> The timestamp we calculated
-    link = f"https://www.google.com/maps/dir/?api=1&origin={origin_lat},{origin_lon}&destination={dest_encoded}&travelmode=transit&departure_time={timestamp}"
+    # 4. Build the STANDARD URL
+    # https://www.google.com/maps/dir/?api=1
+    # &origin=LAT,LON
+    # &destination=ADDRESS
+    # &travelmode=transit
+    # &departure_time=TIMESTAMP
+    
+    link = (
+        f"https://www.google.com/maps/dir/?api=1"
+        f"&origin={origin_lat},{origin_lon}"
+        f"&destination={dest_encoded}"
+        f"&travelmode=transit"
+        f"&departure_time={timestamp}"
+    )
     
     return link
 
