@@ -3,12 +3,16 @@ import json
 import os
 import time
 import random
-from datetime import datetime
+import urllib.parse
+from datetime import datetime, timedelta
 
 # --- 1. CONFIGURATION ---
 SEARCH_URL = "https://trouverunlogement.lescrous.fr/api/fr/search/42" 
 
-# Payload (Standard Paris/Ile-de-France area)
+# Your Destination Address
+DESTINATION_ADDRESS = "Vallourec Meudon Campus, 12 Rue de la Verrerie, 92190 Meudon"
+
+# Search Payload (Ile-de-France)
 PAYLOAD = {
   "idTool": 42,
   "need_aggregation": True,
@@ -27,22 +31,48 @@ PAYLOAD = {
   "toolMechanism": "flow"
 }
 
-# 🥷 STEALTH: List of different browser identities to rotate
+# 🥷 STEALTH: Rotate User-Agents
 USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0'
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
 ]
 
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK")
 HISTORY_FILE = "history.json"
-HEARTBEAT_INTERVAL = 86400  # 24 Hours in seconds
+HEARTBEAT_INTERVAL = 86400  # 24 Hours
 
-# --- 2. HELPER FUNCTIONS ---
+# --- 2. SMART LINK GENERATOR (No API Key Needed) ---
+
+def generate_commute_link(origin_lat, origin_lon):
+    """
+    Generates a Google Maps URL set to Public Transit
+    for the NEXT occurrence of 7:30 AM.
+    """
+    # 1. Calculate Timestamp for "Next 7:30 AM"
+    now = datetime.now()
+    target_time = now.replace(hour=7, minute=30, second=0, microsecond=0)
+    
+    # If 7:30 AM has already passed today, target tomorrow
+    if target_time < now:
+        target_time += timedelta(days=1)
+        
+    # Convert to Unix Timestamp (required by Google Maps URL)
+    timestamp = int(target_time.timestamp())
+
+    # 2. Build the URL
+    base = "https://www.google.com/maps/dir/?api=1"
+    origin = f"{origin_lat},{origin_lon}"
+    dest = urllib.parse.quote(DESTINATION_ADDRESS)
+    
+    # &ttype=dep (Departure Time)
+    # &time= (The calculated timestamp)
+    # &travelmode=transit (Public Transport)
+    return f"{base}&origin={origin}&destination={dest}&travelmode=transit&ttype=dep&time={timestamp}"
+
+# --- 3. HELPER FUNCTIONS ---
 
 def get_random_header():
-    """Returns headers with a random User-Agent to avoid detection."""
     return {
         'User-Agent': random.choice(USER_AGENTS),
         'Accept': 'application/json, text/plain, */*',
@@ -52,65 +82,63 @@ def get_random_header():
     }
 
 def load_data():
-    """Loads history and last heartbeat time."""
     default_data = {"ids": [], "last_heartbeat": 0}
     if os.path.exists(HISTORY_FILE):
         try:
             with open(HISTORY_FILE, "r") as f:
                 data = json.load(f)
-                # Ensure structure is correct if upgrading from old version
-                if isinstance(data, list): 
-                    return {"ids": data, "last_heartbeat": 0}
+                if isinstance(data, list): return {"ids": data, "last_heartbeat": 0}
                 return data
         except:
             return default_data
     return default_data
 
 def save_data(data):
-    """Saves history and heartbeat to file."""
     with open(HISTORY_FILE, "w") as f:
         json.dump(data, f)
 
-# --- 3. DISCORD NOTIFICATIONS ---
+# --- 4. DISCORD NOTIFICATIONS ---
 
 def send_discord_embed(title, description, color, url=None, fields=None):
-    """Generic function to send a beautiful embed card."""
-    if not DISCORD_WEBHOOK_URL:
-        return
+    if not DISCORD_WEBHOOK_URL: return
 
     embed = {
         "title": title,
         "description": description,
-        "color": color, # Decimal color code
-        "footer": {"text": f"🤖 Crous Monitor • {datetime.now().strftime('%H:%M:%S')}"}
+        "color": color,
+        "footer": {"text": f"🤖 CrousBot • {datetime.now().strftime('%H:%M')}"}
     }
-    
     if url: embed["url"] = url
     if fields: embed["fields"] = fields
 
-    payload = {"embeds": [embed]}
-    
     try:
-        requests.post(DISCORD_WEBHOOK_URL, json=payload)
+        requests.post(DISCORD_WEBHOOK_URL, json={"embeds": [embed]})
         time.sleep(1)
     except Exception as e:
         print(f"Failed to send Discord alert: {e}")
 
 def notify_new_housing(housing_list):
-    """🎨 Sends a RICH visual card for new housing."""
-    print(f"🚀 Sending alerts for {len(housing_list)} NEW rooms...")
-    
-    tool_id = PAYLOAD["idTool"] # Extract safely for URL
+    print(f"🚀 Sending alerts for {len(housing_list)} rooms...")
+    tool_id = PAYLOAD["idTool"]
 
     for housing in housing_list:
-        # Extract details
         residence = housing.get("residence", {}).get("label", "Unknown Residence")
         room_type = housing.get("label", "Logement")
         housing_id = housing.get("id")
         
-        # Build Link
-        url = f"https://trouverunlogement.lescrous.fr/tools/{tool_id}/accommodations/{housing_id}"
+        # CROUS Link
+        crous_url = f"https://trouverunlogement.lescrous.fr/tools/{tool_id}/accommodations/{housing_id}"
         
+        # Commute Link (With 7:30 AM logic)
+        try:
+            loc = housing.get("location") or housing.get("residence", {}).get("location")
+            lat = loc.get("lat")
+            lon = loc.get("lon")
+            maps_link = generate_commute_link(lat, lon)
+            commute_text = f"[🚆 **Check 7:30 AM Route**]({maps_link})"
+        except:
+            commute_text = "📍 Location unknown"
+
         # Price
         try:
             price_cents = housing.get("occupationModes", [{}])[0].get("rent", {}).get("min", 0)
@@ -118,52 +146,48 @@ def notify_new_housing(housing_list):
         except:
             price = "N/A"
 
-        # Area (m²)
+        # Area
         try:
             area = housing.get("area", {}).get("min", "?")
             area_str = f"{area} m²"
         except:
             area_str = "N/A"
 
-        # Send Green Embed (Success)
+        # Fields
         fields = [
             {"name": "💰 Price", "value": f"**{price}**", "inline": True},
-            {"name": "📏 Area", "value": area_str, "inline": True}
+            {"name": "📏 Area", "value": area_str, "inline": True},
+            {"name": "🗺️ Commute", "value": commute_text, "inline": False}
         ]
         
         send_discord_embed(
             title=f"🏡 FOUND: {residence}",
-            description=f"**Type:** {room_type}\n[👉 Click here to open on CROUS]({url})",
+            description=f"**Type:** {room_type}\n[👉 Open Listing on CROUS]({crous_url})",
             color=5763719, # Green
-            url=url,
+            url=crous_url,
             fields=fields
         )
 
 def notify_error(status_code, error_msg):
-    """🚨 Sends a RED alert if the script crashes."""
     send_discord_embed(
         title="⚠️ MONITOR ERROR",
-        description=f"The bot encountered an error scanning CROUS.\n**Code:** {status_code}\n**Error:** {error_msg}",
+        description=f"Error scanning CROUS.\nCode: {status_code}\nMsg: {error_msg}",
         color=15548997 # Red
     )
 
 def notify_heartbeat(count_ids):
-    """💓 Sends a BLUE status report once a day."""
     send_discord_embed(
         title="✅ System Healthy",
-        description=f"I am still alive and scanning.\n**Total listings tracked:** {count_ids}\nNo new housing found in this scan.",
+        description=f"Scanning active.\nTotal Listings Tracked: **{count_ids}**",
         color=3447003 # Blue
     )
 
-# --- 4. MAIN LOGIC ---
+# --- 5. MAIN LOGIC ---
 
 def check_crous():
     print("--- STARTING CHECK ---")
-    
-    # 🥷 STEALTH: Wait randomly 2-5 seconds before starting to look human
-    time.sleep(random.uniform(2, 5))
+    time.sleep(random.uniform(2, 5)) # Stealth
 
-    # Load Memory
     data_store = load_data()
     seen_ids = data_store["ids"]
     last_heartbeat = data_store["last_heartbeat"]
@@ -171,12 +195,9 @@ def check_crous():
     print(f"Loaded {len(seen_ids)} known IDs.")
 
     try:
-        # Request with Random Header
         response = requests.post(SEARCH_URL, json=PAYLOAD, headers=get_random_header())
         
-        # 🚨 ERROR CHECKING
         if response.status_code != 200:
-            print(f"❌ Error {response.status_code}")
             notify_error(response.status_code, response.text[:200])
             return
 
@@ -192,27 +213,17 @@ def check_crous():
             if item_id not in seen_ids:
                 new_items.append(item)
 
-        # Logic: Listings Found?
         if len(new_items) > 0:
             print(f"✅ Found {len(new_items)} NEW listings!")
             notify_new_housing(new_items)
-            
-            # Save new history
             updated_ids = list(set(seen_ids + current_ids))
             save_data({"ids": updated_ids, "last_heartbeat": last_heartbeat})
-            
         else:
             print("No new listings.")
-            
-            # 💓 HEARTBEAT CHECK
-            # If it has been more than 24 hours (86400 seconds) since last heartbeat
             now = time.time()
             if (now - last_heartbeat) > HEARTBEAT_INTERVAL:
-                print("Sending Heartbeat...")
                 notify_heartbeat(len(seen_ids))
-                last_heartbeat = now # Update time
-            
-            # Save history (to keep IDs fresh and update heartbeat time)
+                last_heartbeat = now
             save_data({"ids": list(set(seen_ids + current_ids)), "last_heartbeat": last_heartbeat})
 
     except Exception as e:
