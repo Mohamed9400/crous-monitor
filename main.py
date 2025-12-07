@@ -42,33 +42,28 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK")
 HISTORY_FILE = "history.json"
 HEARTBEAT_INTERVAL = 86400  # 24 Hours
 
-# --- 2. SMART LINK GENERATOR (No API Key Needed) ---
+# --- 2. SMART LINK GENERATOR (Fixed for 7:30 AM) ---
 
 def generate_commute_link(origin_lat, origin_lon):
     """
-    Generates a Google Maps URL set to Public Transit
-    for the NEXT occurrence of 7:30 AM.
+    Generates a Google Maps URL set to Public Transit (dirflg=r)
+    for Tomorrow at 07:30 AM (ttype=dep).
     """
-    # 1. Calculate Timestamp for "Next 7:30 AM"
+    # Calculate "Tomorrow"
     now = datetime.now()
-    target_time = now.replace(hour=7, minute=30, second=0, microsecond=0)
+    tomorrow = now + timedelta(days=1)
+    date_str = tomorrow.strftime("%Y-%m-%d") # e.g. 2023-10-27
     
-    # If 7:30 AM has already passed today, target tomorrow
-    if target_time < now:
-        target_time += timedelta(days=1)
-        
-    # Convert to Unix Timestamp (required by Google Maps URL)
-    timestamp = int(target_time.timestamp())
-
-    # 2. Build the URL
-    base = "https://www.google.com/maps/dir/?api=1"
-    origin = f"{origin_lat},{origin_lon}"
+    # URL Encoding
     dest = urllib.parse.quote(DESTINATION_ADDRESS)
     
-    # &ttype=dep (Departure Time)
-    # &time= (The calculated timestamp)
-    # &travelmode=transit (Public Transport)
-    return f"{base}&origin={origin}&destination={dest}&travelmode=transit&ttype=dep&time={timestamp}"
+    # Construct the "Classic" Maps Link
+    # dirflg=r  => Public Transit
+    # ttype=dep => Departure Time
+    # time=07:30 => 7:30 AM
+    link = f"https://www.google.com/maps?saddr={origin_lat},{origin_lon}&daddr={dest}&dirflg=r&ttype=dep&date={date_str}&time=07:30"
+    
+    return link
 
 # --- 3. HELPER FUNCTIONS ---
 
