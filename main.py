@@ -64,7 +64,7 @@ def send_discord_alert(housing_list):
             price = "Price Unknown"
 
         housing_id = housing.get("id")
-        url = f"https://trouverunlogement.lescrous.fr/tools/{PAYLOAD["idTool"]}/accommodations/{housing_id}"
+        url = f"https://trouverunlogement.lescrous.fr/tools/{PAYLOAD['idTool']}/accommodations/{housing_id}"
 
         data = {
             "content": f"🚨 **NEW LISTING!** 🚨\n**{title}**\n💰 Price: {price}\n📍 [Click here to view]({url})"
