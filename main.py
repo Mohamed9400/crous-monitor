@@ -42,29 +42,36 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK")
 HISTORY_FILE = "history.json"
 HEARTBEAT_INTERVAL = 86400  # 24 Hours
 
-# --- 2. SMART LINK GENERATOR (Fixed) ---
+# --- 2. SMART LINK GENERATOR (The Fix) ---
 
 def generate_commute_link(origin_lat, origin_lon):
     """
-    Generates a Standard Google Maps URL set to Public Transit (dirflg=r)
-    for Tomorrow at 07:30 AM.
+    Generates a Universal Google Maps URL.
+    - Forces Public Transit (travelmode=transit)
+    - Sets Departure Time to the next 7:30 AM (departure_time=TIMESTAMP)
     """
-    # 1. Calculate "Tomorrow"
+    # 1. Calculate "Next 7:30 AM"
     now = datetime.now()
-    tomorrow = now + timedelta(days=1)
-    date_str = tomorrow.strftime("%Y-%m-%d") # e.g. 2023-10-27
+    target_time = now.replace(hour=7, minute=30, second=0, microsecond=0)
     
-    # 2. URL Encoding
-    dest = urllib.parse.quote(DESTINATION_ADDRESS)
-    
-    # 3. Construct the Standard Link
-    # saddr = Start Address (Housing GPS)
-    # daddr = Destination Address
-    # dirflg=r  => Public Transit (Rail/Bus/Metro)
-    # ttype=dep => Departure Time
-    # date & time => The specific slot
-    
-    link = f"https://www.google.com/maps?saddr={origin_lat},{origin_lon}&daddr={dest}&dirflg=r&ttype=dep&date={date_str}&time=07:30"
+    # If 7:30 AM has passed today, move to tomorrow
+    if target_time < now:
+        target_time += timedelta(days=1)
+        
+    # 2. Convert to Unix Timestamp (Required by Google Maps URL)
+    # This gives an integer like 1735626600
+    timestamp = int(target_time.timestamp())
+
+    # 3. Encode Destination safely
+    dest_encoded = urllib.parse.quote(DESTINATION_ADDRESS)
+
+    # 4. Build the Official Universal Link
+    # api=1 -> Forces the map app to handle the parameters
+    # origin -> The housing GPS
+    # destination -> Vallourec
+    # travelmode=transit -> Public Transport
+    # departure_time -> The timestamp we calculated
+    link = f"https://www.google.com/maps/dir/?api=1&origin={origin_lat},{origin_lon}&destination={dest_encoded}&travelmode=transit&departure_time={timestamp}"
     
     return link
 
@@ -127,7 +134,7 @@ def notify_new_housing(housing_list):
         # CROUS Link
         crous_url = f"https://trouverunlogement.lescrous.fr/tools/{tool_id}/accommodations/{housing_id}"
         
-        # Commute Link (With 7:30 AM logic)
+        # Commute Link (Fixed)
         try:
             loc = housing.get("location") or housing.get("residence", {}).get("location")
             lat = loc.get("lat")
