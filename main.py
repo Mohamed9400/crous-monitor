@@ -10,12 +10,25 @@ from datetime import datetime, timedelta
 # --- 1. CONFIGURATION ---
 SEARCH_URL = "https://trouverunlogement.lescrous.fr/api/fr/search/42" 
 
-# 🎯 YOUR TARGET: Vallourec Meudon Campus (Approx GPS)
-TARGET_LAT = 48.8207
-TARGET_LON = 2.2337
+# 🏙️ FILTER TARGET: Châtelet - Les Halles (The Transport Hub)
+# We filter listings based on their distance to THIS point.
+FILTER_LAT = 48.8606
+FILTER_LON = 2.3476
+MAX_DISTANCE_KM = 13.0  # Covers Saint-Denis (9km), Montreuil, Ivry, etc.
+
+# 🏭 COMMUTE TARGET: Vallourec Meudon (Your Work)
+# The "Check Route" button will point here.
 DESTINATION_ADDRESS = "Vallourec Meudon Campus, 12 Rue de la Verrerie, 92190 Meudon"
 
-# 📍 YOUR CUSTOM ZONE
+# 🚫 BLACKLIST (Refined)
+# Deleted MIN_SIZE_M2 as requested.
+BLACKLIST_KEYWORDS = [
+    "colocation", "coloc", "partagé", 
+    "double", "couple",
+    "rotative", "court séjour"
+]
+
+# 📍 YOUR ZONE (Paris + Petite Couronne)
 PAYLOAD = {
   "idTool": 42,
   "need_aggregation": True,
@@ -43,34 +56,49 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK")
 HISTORY_FILE = "history.json"
 HEARTBEAT_INTERVAL = 86400
 
-# --- 2. MATH: HAVERSINE DISTANCE ---
-def calculate_distance(lat1, lon1, lat2, lon2):
-    """
-    Calculates distance in km between two GPS points.
-    """
-    R = 6371  # Earth radius in km
-    dlat = math.radians(lat2 - lat1)
-    dlon = math.radians(lon2 - lon1)
-    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2) * math.sin(dlon/2)
+# --- 2. MATH & LOGIC ---
+
+def calculate_distance_from_chatelet(lat1, lon1):
+    """Calculates km distance from Chatelet."""
+    R = 6371 # Earth radius
+    dlat = math.radians(FILTER_LAT - lat1)
+    dlon = math.radians(FILTER_LON - lon1)
+    a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(FILTER_LAT)) * math.sin(dlon/2)**2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     return round(R * c, 2)
 
-# --- 3. LINK GENERATOR ---
 def generate_commute_link(origin_lat, origin_lon):
+    """Generates map link to VALLOUREC MEUDON (Not Chatelet)."""
     now = datetime.now()
     target_time = now.replace(hour=7, minute=30, second=0, microsecond=0)
     if target_time < now: target_time += timedelta(days=1)
     date_str = target_time.strftime("%Y-%m-%d") 
     dest_encoded = urllib.parse.quote(DESTINATION_ADDRESS)
-    
-    # Official Standard Google Link
     return (
         f"https://www.google.com/maps?"
         f"saddr={origin_lat},{origin_lon}&daddr={dest_encoded}"
         f"&dirflg=r&ttype=dep&date={date_str}&time=07:30"
     )
 
-# --- 4. HELPER FUNCTIONS ---
+def is_valid_listing(item, dist_from_chatelet):
+    # 1. Check Distance to Chatelet
+    if dist_from_chatelet > MAX_DISTANCE_KM:
+        return False 
+
+    # 2. Check Blacklist Keywords
+    text_corpus = (
+        item.get("label", "") + " " + 
+        item.get("residence", {}).get("label", "")
+    ).lower()
+    
+    for word in BLACKLIST_KEYWORDS:
+        if word in text_corpus:
+            return False
+            
+    return True
+
+# --- 3. STANDARD FUNCTIONS ---
+
 def get_random_header():
     return {
         'User-Agent': random.choice(USER_AGENTS),
@@ -96,7 +124,6 @@ def save_data(data):
     with open(HISTORY_FILE, "w") as f:
         json.dump(data, f)
 
-# --- 5. DISCORD NOTIFICATIONS ---
 def send_discord_embed(title, description, color, url=None, fields=None):
     if not DISCORD_WEBHOOK_URL: return
     embed = {
@@ -111,71 +138,61 @@ def send_discord_embed(title, description, color, url=None, fields=None):
     except: pass
 
 def notify_batch(sorted_housing_list):
-    print(f"🚀 Sending alerts for {len(sorted_housing_list)} rooms (Sorted by Distance)...")
-    
+    print(f"🚀 Sending alerts for {len(sorted_housing_list)} rooms...")
     for i, item in enumerate(sorted_housing_list):
         housing = item['data']
-        distance = item['dist']
+        dist = item['dist'] # This is distance to CHATELET
         
-        residence = housing.get("residence", {}).get("label", "Unknown Residence")
+        residence = housing.get("residence", {}).get("label", "Unknown")
         h_id = housing.get("id")
         crous_url = f"https://trouverunlogement.lescrous.fr/tools/42/accommodations/{h_id}"
         
-        # Link Generation
+        # Link to MEUDON
         try:
             loc = housing.get("location") or housing.get("residence", {}).get("location")
             maps_link = generate_commute_link(loc.get("lat"), loc.get("lon"))
-            commute_text = f"[🚆 **Check Route (7:30 AM)**]({maps_link})"
+            commute_text = f"[🚆 **Check Route to Meudon**]({maps_link})"
         except: commute_text = "📍 Location unknown"
 
-        # Price & Area
         try: price = f"{housing['occupationModes'][0]['rent']['min'] / 100}€"
         except: price = "N/A"
         try: area = f"{housing['area']['min']} m²"
         except: area = "N/A"
 
-        # Emoji based on rank
-        rank_emoji = "🥇" if i == 0 else "🥈" if i == 1 else "🥉" if i == 2 else "🏠"
-
+        rank = "🥇" if i == 0 else "🥈" if i == 1 else "🏠"
+        
         fields = [
-            {"name": "📏 Distance", "value": f"**{distance} km**", "inline": True},
+            {"name": "🗼 Dist. Châtelet", "value": f"**{dist} km**", "inline": True},
             {"name": "💰 Price", "value": f"**{price}**", "inline": True},
             {"name": "🗺️ Commute", "value": commute_text, "inline": False}
         ]
-        
-        send_discord_embed(
-            f"{rank_emoji} FOUND: {residence}", 
-            f"**Distance to Work:** {distance} km\n[👉 Open Listing]({crous_url})", 
-            5763719, 
-            crous_url, 
-            fields
-        )
+        send_discord_embed(f"{rank} FOUND: {residence}", f"[👉 Open Listing]({crous_url})", 5763719, crous_url, fields)
 
-# --- 6. MAIN LOGIC ---
+# --- 4. MAIN ---
+
 def check_crous():
     print("--- STARTING CHECK ---")
     time.sleep(random.uniform(2, 5))
 
     data = load_data()
-    previous_status = data["status"]
+    first_run = len(data["ids"]) == 0
     
     try:
         response = requests.post(SEARCH_URL, json=PAYLOAD, headers=get_random_header(), timeout=15)
         
         if response.status_code != 200:
-            if previous_status == "online":
-                send_discord_embed("⚠️ CROUS DOWN", f"HTTP {response.status_code}. Silence until recovery.", 15548997)
+            if data["status"] == "online":
+                send_discord_embed("⚠️ CROUS DOWN", f"HTTP {response.status_code}.", 15548997)
                 data["status"] = "offline"
                 save_data(data)
             return
 
-        if previous_status == "offline":
-            send_discord_embed("🟢 CROUS RECOVERED", "Back online.", 5763719)
+        if data["status"] == "offline":
+            send_discord_embed("🟢 RECOVERED", "Back online.", 5763719)
             data["status"] = "online"
 
         items = response.json().get("results", {}).get("items", [])
         
-        # --- NEW SORTING LOGIC ---
         new_batch = []
         current_ids = []
 
@@ -183,37 +200,36 @@ def check_crous():
             h_id = item.get("id")
             current_ids.append(h_id)
             
-            if h_id not in data["ids"]:
-                # Calculate Distance IMMEDIATELY
-                try:
-                    loc = item.get("location") or item.get("residence", {}).get("location")
-                    dist = calculate_distance(loc.get("lat"), loc.get("lon"), TARGET_LAT, TARGET_LON)
-                except:
-                    dist = 999 # If unknown, put it last
-                
-                # Add to batch with distance info
+            if h_id in data["ids"]: continue
+
+            # Calc distance to CHATELET
+            try:
+                loc = item.get("location") or item.get("residence", {}).get("location")
+                dist = calculate_distance_from_chatelet(loc.get("lat"), loc.get("lon"))
+            except: dist = 999
+            
+            if is_valid_listing(item, dist):
                 new_batch.append({'data': item, 'dist': dist})
 
         if new_batch:
-            # SORT by distance (Smallest number first)
-            new_batch.sort(key=lambda x: x['dist'])
-            notify_batch(new_batch)
+            new_batch.sort(key=lambda x: x['dist']) # Closest to Chatelet first
+            
+            if first_run:
+                print(f"First run: {len(new_batch)} listings found. Saving silently.")
+                send_discord_embed("✅ Bot Initialized", f"Found {len(new_batch)} listings near Châtelet (<{MAX_DISTANCE_KM}km).\nWaiting for new drops...", 3447003)
+            else:
+                notify_batch(new_batch)
             
         data["ids"] = list(set(data["ids"] + current_ids))
-        data["status"] = "online"
         
         if (time.time() - data.get("last_heartbeat", 0)) > HEARTBEAT_INTERVAL:
-            send_discord_embed("✅ System Active", f"Tracking {len(data['ids'])} listings.", 3447003)
+            send_discord_embed("✅ Active", f"Scanning around Châtelet.\nTracking {len(data['ids'])} listings.", 3447003)
             data["last_heartbeat"] = time.time()
             
         save_data(data)
 
     except Exception as e:
-        print(f"Crash: {e}")
-        if previous_status == "online":
-            send_discord_embed("⚠️ CONNECTION FAILED", "Silence until recovery.", 15548997)
-            data["status"] = "offline"
-            save_data(data)
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     check_crous()
