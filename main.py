@@ -23,7 +23,7 @@ FILTER_LON = 2.3476
 MAX_DISTANCE_FROM_CHATELET = 13.0 
 
 # 🚫 BLACKLIST
-BLACKLIST_KEYWORDS = ["colocation", "coloc", "partagé", "double", "couple", "rotative", "court séjour"]
+BLACKLIST_KEYWORDS = ["colocation","Colocation", "coloc", "partagé", "double", "couple", "rotative", "court séjour"]
 
 # 📍 SEARCH ZONE
 PAYLOAD = {
