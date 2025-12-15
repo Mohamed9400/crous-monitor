@@ -97,7 +97,7 @@ def is_valid_listing(item):
     
     for word in BLACKLIST_KEYWORDS:
         if word in raw_data_str:
-            # Found a banned word? Kill it.
+            # Found a banned word anywhere? Kill it.
             return False
             
     return True
