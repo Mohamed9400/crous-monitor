@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 # --- 1. CONFIGURATION ---
 SEARCH_URL = "https://trouverunlogement.lescrous.fr/api/fr/search/42" 
 
-# 🏭 TARGET 1: Vallourec Meudon (For SORTING & DISPLAY)
+# 🏭 TARGET 1: Vallourec Meudon (For SORTING)
 WORK_LAT = 48.8207
 WORK_LON = 2.2337
 DESTINATION_ADDRESS = "Vallourec Meudon Campus, 12 Rue de la Verrerie, 92190 Meudon"
@@ -20,11 +20,12 @@ FILTER_LAT = 48.8606
 FILTER_LON = 2.3476
 MAX_DISTANCE_FROM_CHATELET = 13.0 
 
-# 🚫 BLACKLIST (Updated & Aggressive)
+# ☢️ NUCLEAR BLACKLIST
+# If ANY of these words appear ANYWHERE in the listing data, it dies.
 BLACKLIST_KEYWORDS = [
     "colocation", "coloc", "co-location", 
-    "partagé", "partager", "partage",   # Covers "à partager", "partagé", etc.
-    "double", "couple", "duo",
+    "partagé", "partager", "partage", "cohabitation",
+    "double", "couple", "duo", "conjoint",
     "rotative", "court séjour", "chambre"
 ]
 
@@ -56,7 +57,6 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK")
 HISTORY_FILE = "history.json"
 HEARTBEAT_INTERVAL = 86400
 
-# Check if user requested a Force Relist via GitHub Actions
 FORCE_RELIST = os.environ.get("FORCE_RELIST", "false").lower() == "true"
 
 # --- 2. MATH & LOGIC ---
@@ -82,7 +82,7 @@ def generate_commute_link(origin_lat, origin_lon):
     )
 
 def is_valid_listing(item):
-    # 1. Check Distance to Chatelet
+    # 1. DISTANCE CHECK (Chatelet Filter)
     try:
         loc = item.get("location") or item.get("residence", {}).get("location")
         dist_chatelet = calculate_distance(loc.get("lat"), loc.get("lon"), FILTER_LAT, FILTER_LON)
@@ -90,28 +90,15 @@ def is_valid_listing(item):
             return False
     except: pass
 
-    # 2. AGGRESSIVE TEXT CHECK
-    # We combine Title + Residence Name + Description into one big text blob to scan
-    text_corpus = (
-        str(item.get("label", "")) + " " + 
-        str(item.get("shortDescription", "")) + " " + 
-        str(item.get("residence", {}).get("label", ""))
-    ).lower()
+    # 2. NUCLEAR TEXT CHECK
+    # Dump the ENTIRE listing object to a lowercase string.
+    # This captures hidden fields, codes, IDs, everything.
+    raw_data_str = json.dumps(item).lower()
     
     for word in BLACKLIST_KEYWORDS:
-        if word in text_corpus:
-            return False # Killed by text blacklist
-
-    # 3. TECHNICAL CHECK (Occupation Mode)
-    # This checks the hidden API flags for colocation
-    try:
-        modes = item.get("occupationModes", [])
-        for mode in modes:
-            # Check if the mode dictionary contains "coloc"
-            if isinstance(mode, dict):
-                if "coloc" in str(mode.get("label", "")).lower() or "coloc" in str(mode.get("code", "")).lower():
-                    return False # Killed by API flag
-    except: pass
+        if word in raw_data_str:
+            # Found a banned word? Kill it.
+            return False
             
     return True
 
