@@ -10,30 +10,27 @@ from datetime import datetime, timedelta
 # --- 1. CONFIGURATION ---
 SEARCH_URL = "https://trouverunlogement.lescrous.fr/api/fr/search/42" 
 
-# 🏙️ FILTER TARGET: Châtelet - Les Halles (The Transport Hub)
-# We filter listings based on their distance to THIS point.
-FILTER_LAT = 48.8606
-FILTER_LON = 2.3476
-MAX_DISTANCE_KM = 13.0  # Covers Saint-Denis (9km), Montreuil, Ivry, etc.
-
-# 🏭 COMMUTE TARGET: Vallourec Meudon (Your Work)
-# The "Check Route" button will point here.
+# 🏭 TARGET 1: Vallourec Meudon (For SORTING & DISPLAY)
+# We want to see the closest homes to work first.
+WORK_LAT = 48.8207
+WORK_LON = 2.2337
 DESTINATION_ADDRESS = "Vallourec Meudon Campus, 12 Rue de la Verrerie, 92190 Meudon"
 
-# 🚫 BLACKLIST (Refined)
-# Deleted MIN_SIZE_M2 as requested.
-BLACKLIST_KEYWORDS = [
-    "colocation", "coloc", "partagé", 
-    "double", "couple",
-    "rotative", "court séjour"
-]
+# 🏙️ TARGET 2: Châtelet (For FILTERING)
+# We still reject homes too far from the center of Paris.
+FILTER_LAT = 48.8606
+FILTER_LON = 2.3476
+MAX_DISTANCE_FROM_CHATELET = 13.0 
 
-# 📍 YOUR ZONE (Paris + Petite Couronne)
+# 🚫 BLACKLIST
+BLACKLIST_KEYWORDS = ["colocation", "coloc", "partagé", "double", "couple", "rotative", "court séjour"]
+
+# 📍 SEARCH ZONE
 PAYLOAD = {
   "idTool": 42,
   "need_aggregation": True,
   "page": 1,
-  "pageSize": 24,
+  "pageSize": 24, # Request 24 items
   "sector": None,
   "occupationModes": ["alone"],
   "location": [
@@ -56,19 +53,22 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK")
 HISTORY_FILE = "history.json"
 HEARTBEAT_INTERVAL = 86400
 
+# Check if user requested a Force Relist via GitHub Actions
+# Inputs come as strings "true"/"false"
+FORCE_RELIST = os.environ.get("FORCE_RELIST", "false").lower() == "true"
+
 # --- 2. MATH & LOGIC ---
 
-def calculate_distance_from_chatelet(lat1, lon1):
-    """Calculates km distance from Chatelet."""
+def calculate_distance(lat1, lon1, lat2, lon2):
+    """Calculates km distance between two points."""
     R = 6371 # Earth radius
-    dlat = math.radians(FILTER_LAT - lat1)
-    dlon = math.radians(FILTER_LON - lon1)
-    a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(FILTER_LAT)) * math.sin(dlon/2)**2
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2)**2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     return round(R * c, 2)
 
 def generate_commute_link(origin_lat, origin_lon):
-    """Generates map link to VALLOUREC MEUDON (Not Chatelet)."""
     now = datetime.now()
     target_time = now.replace(hour=7, minute=30, second=0, microsecond=0)
     if target_time < now: target_time += timedelta(days=1)
@@ -80,12 +80,16 @@ def generate_commute_link(origin_lat, origin_lon):
         f"&dirflg=r&ttype=dep&date={date_str}&time=07:30"
     )
 
-def is_valid_listing(item, dist_from_chatelet):
-    # 1. Check Distance to Chatelet
-    if dist_from_chatelet > MAX_DISTANCE_KM:
-        return False 
+def is_valid_listing(item):
+    # 1. Check Distance to Chatelet (Keep it central)
+    try:
+        loc = item.get("location") or item.get("residence", {}).get("location")
+        dist_chatelet = calculate_distance(loc.get("lat"), loc.get("lon"), FILTER_LAT, FILTER_LON)
+        if dist_chatelet > MAX_DISTANCE_FROM_CHATELET:
+            return False
+    except: pass
 
-    # 2. Check Blacklist Keywords
+    # 2. Check Blacklist
     text_corpus = (
         item.get("label", "") + " " + 
         item.get("residence", {}).get("label", "")
@@ -139,19 +143,22 @@ def send_discord_embed(title, description, color, url=None, fields=None):
 
 def notify_batch(sorted_housing_list):
     print(f"🚀 Sending alerts for {len(sorted_housing_list)} rooms...")
+    
+    if FORCE_RELIST:
+         send_discord_embed("🔄 FORCED REFRESH", f"Displaying **{len(sorted_housing_list)}** available listings sorted by distance to Vallourec.", 3447003)
+
     for i, item in enumerate(sorted_housing_list):
         housing = item['data']
-        dist = item['dist'] # This is distance to CHATELET
+        dist_work = item['dist_work'] # Distance to VALLOUREC
         
         residence = housing.get("residence", {}).get("label", "Unknown")
         h_id = housing.get("id")
         crous_url = f"https://trouverunlogement.lescrous.fr/tools/42/accommodations/{h_id}"
         
-        # Link to MEUDON
         try:
             loc = housing.get("location") or housing.get("residence", {}).get("location")
             maps_link = generate_commute_link(loc.get("lat"), loc.get("lon"))
-            commute_text = f"[🚆 **Check Route to Meudon**]({maps_link})"
+            commute_text = f"[🚆 **Check Route**]({maps_link})"
         except: commute_text = "📍 Location unknown"
 
         try: price = f"{housing['occupationModes'][0]['rent']['min'] / 100}€"
@@ -159,10 +166,11 @@ def notify_batch(sorted_housing_list):
         try: area = f"{housing['area']['min']} m²"
         except: area = "N/A"
 
-        rank = "🥇" if i == 0 else "🥈" if i == 1 else "🏠"
+        # Emoji ranking
+        rank = "🥇" if i == 0 else "🥈" if i == 1 else "🥉" if i == 2 else "🏠"
         
         fields = [
-            {"name": "🗼 Dist. Châtelet", "value": f"**{dist} km**", "inline": True},
+            {"name": "🏭 Dist. Vallourec", "value": f"**{dist_work} km**", "inline": True},
             {"name": "💰 Price", "value": f"**{price}**", "inline": True},
             {"name": "🗺️ Commute", "value": commute_text, "inline": False}
         ]
@@ -171,11 +179,10 @@ def notify_batch(sorted_housing_list):
 # --- 4. MAIN ---
 
 def check_crous():
-    print("--- STARTING CHECK ---")
+    print(f"--- STARTING CHECK (FORCE_RELIST={FORCE_RELIST}) ---")
     time.sleep(random.uniform(2, 5))
 
     data = load_data()
-    first_run = len(data["ids"]) == 0
     
     try:
         response = requests.post(SEARCH_URL, json=PAYLOAD, headers=get_random_header(), timeout=15)
@@ -193,37 +200,38 @@ def check_crous():
 
         items = response.json().get("results", {}).get("items", [])
         
-        new_batch = []
+        valid_batch = []
         current_ids = []
 
         for item in items:
             h_id = item.get("id")
             current_ids.append(h_id)
             
-            if h_id in data["ids"]: continue
+            # If standard run, skip known IDs. 
+            # If FORCE_RELIST is True, we process EVERYTHING.
+            if not FORCE_RELIST and h_id in data["ids"]: 
+                continue
 
-            # Calc distance to CHATELET
-            try:
-                loc = item.get("location") or item.get("residence", {}).get("location")
-                dist = calculate_distance_from_chatelet(loc.get("lat"), loc.get("lon"))
-            except: dist = 999
-            
-            if is_valid_listing(item, dist):
-                new_batch.append({'data': item, 'dist': dist})
+            if is_valid_listing(item):
+                # Calculate distance to WORK (Vallourec) for sorting
+                try:
+                    loc = item.get("location") or item.get("residence", {}).get("location")
+                    dist_work = calculate_distance(loc.get("lat"), loc.get("lon"), WORK_LAT, WORK_LON)
+                except: dist_work = 999
+                
+                valid_batch.append({'data': item, 'dist_work': dist_work})
 
-        if new_batch:
-            new_batch.sort(key=lambda x: x['dist']) # Closest to Chatelet first
+        if valid_batch:
+            # Sort by distance to VALLOUREC (Closest first)
+            valid_batch.sort(key=lambda x: x['dist_work'])
+            notify_batch(valid_batch)
             
-            if first_run:
-                print(f"First run: {len(new_batch)} listings found. Saving silently.")
-                send_discord_embed("✅ Bot Initialized", f"Found {len(new_batch)} listings near Châtelet (<{MAX_DISTANCE_KM}km).\nWaiting for new drops...", 3447003)
-            else:
-                notify_batch(new_batch)
-            
+        # Update history
         data["ids"] = list(set(data["ids"] + current_ids))
         
-        if (time.time() - data.get("last_heartbeat", 0)) > HEARTBEAT_INTERVAL:
-            send_discord_embed("✅ Active", f"Scanning around Châtelet.\nTracking {len(data['ids'])} listings.", 3447003)
+        # Only send heartbeat if we didn't just spam a forced relist
+        if not FORCE_RELIST and (time.time() - data.get("last_heartbeat", 0)) > HEARTBEAT_INTERVAL:
+            send_discord_embed("✅ Active", f"Scanning... Tracking {len(data['ids'])} listings.", 3447003)
             data["last_heartbeat"] = time.time()
             
         save_data(data)
