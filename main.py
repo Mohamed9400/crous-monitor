@@ -11,26 +11,29 @@ from datetime import datetime, timedelta
 SEARCH_URL = "https://trouverunlogement.lescrous.fr/api/fr/search/42" 
 
 # 🏭 TARGET 1: Vallourec Meudon (For SORTING & DISPLAY)
-# We want to see the closest homes to work first.
 WORK_LAT = 48.8207
 WORK_LON = 2.2337
 DESTINATION_ADDRESS = "Vallourec Meudon Campus, 12 Rue de la Verrerie, 92190 Meudon"
 
 # 🏙️ TARGET 2: Châtelet (For FILTERING)
-# We still reject homes too far from the center of Paris.
 FILTER_LAT = 48.8606
 FILTER_LON = 2.3476
 MAX_DISTANCE_FROM_CHATELET = 13.0 
 
-# 🚫 BLACKLIST
-BLACKLIST_KEYWORDS = ["colocation","Colocation", "coloc", "partagé", "double", "couple", "rotative", "court séjour"]
+# 🚫 BLACKLIST (Updated & Aggressive)
+BLACKLIST_KEYWORDS = [
+    "colocation", "coloc", "co-location", 
+    "partagé", "partager", "partage",   # Covers "à partager", "partagé", etc.
+    "double", "couple", "duo",
+    "rotative", "court séjour", "chambre"
+]
 
 # 📍 SEARCH ZONE
 PAYLOAD = {
   "idTool": 42,
   "need_aggregation": True,
   "page": 1,
-  "pageSize": 24, # Request 24 items
+  "pageSize": 24,
   "sector": None,
   "occupationModes": ["alone"],
   "location": [
@@ -54,13 +57,11 @@ HISTORY_FILE = "history.json"
 HEARTBEAT_INTERVAL = 86400
 
 # Check if user requested a Force Relist via GitHub Actions
-# Inputs come as strings "true"/"false"
 FORCE_RELIST = os.environ.get("FORCE_RELIST", "false").lower() == "true"
 
 # --- 2. MATH & LOGIC ---
 
 def calculate_distance(lat1, lon1, lat2, lon2):
-    """Calculates km distance between two points."""
     R = 6371 # Earth radius
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
@@ -81,7 +82,7 @@ def generate_commute_link(origin_lat, origin_lon):
     )
 
 def is_valid_listing(item):
-    # 1. Check Distance to Chatelet (Keep it central)
+    # 1. Check Distance to Chatelet
     try:
         loc = item.get("location") or item.get("residence", {}).get("location")
         dist_chatelet = calculate_distance(loc.get("lat"), loc.get("lon"), FILTER_LAT, FILTER_LON)
@@ -89,15 +90,28 @@ def is_valid_listing(item):
             return False
     except: pass
 
-    # 2. Check Blacklist
+    # 2. AGGRESSIVE TEXT CHECK
+    # We combine Title + Residence Name + Description into one big text blob to scan
     text_corpus = (
-        item.get("label", "") + " " + 
-        item.get("residence", {}).get("label", "")
+        str(item.get("label", "")) + " " + 
+        str(item.get("shortDescription", "")) + " " + 
+        str(item.get("residence", {}).get("label", ""))
     ).lower()
     
     for word in BLACKLIST_KEYWORDS:
         if word in text_corpus:
-            return False
+            return False # Killed by text blacklist
+
+    # 3. TECHNICAL CHECK (Occupation Mode)
+    # This checks the hidden API flags for colocation
+    try:
+        modes = item.get("occupationModes", [])
+        for mode in modes:
+            # Check if the mode dictionary contains "coloc"
+            if isinstance(mode, dict):
+                if "coloc" in str(mode.get("label", "")).lower() or "coloc" in str(mode.get("code", "")).lower():
+                    return False # Killed by API flag
+    except: pass
             
     return True
 
@@ -149,7 +163,7 @@ def notify_batch(sorted_housing_list):
 
     for i, item in enumerate(sorted_housing_list):
         housing = item['data']
-        dist_work = item['dist_work'] # Distance to VALLOUREC
+        dist_work = item['dist_work'] 
         
         residence = housing.get("residence", {}).get("label", "Unknown")
         h_id = housing.get("id")
@@ -166,7 +180,6 @@ def notify_batch(sorted_housing_list):
         try: area = f"{housing['area']['min']} m²"
         except: area = "N/A"
 
-        # Emoji ranking
         rank = "🥇" if i == 0 else "🥈" if i == 1 else "🥉" if i == 2 else "🏠"
         
         fields = [
@@ -207,13 +220,10 @@ def check_crous():
             h_id = item.get("id")
             current_ids.append(h_id)
             
-            # If standard run, skip known IDs. 
-            # If FORCE_RELIST is True, we process EVERYTHING.
             if not FORCE_RELIST and h_id in data["ids"]: 
                 continue
 
             if is_valid_listing(item):
-                # Calculate distance to WORK (Vallourec) for sorting
                 try:
                     loc = item.get("location") or item.get("residence", {}).get("location")
                     dist_work = calculate_distance(loc.get("lat"), loc.get("lon"), WORK_LAT, WORK_LON)
@@ -222,14 +232,11 @@ def check_crous():
                 valid_batch.append({'data': item, 'dist_work': dist_work})
 
         if valid_batch:
-            # Sort by distance to VALLOUREC (Closest first)
             valid_batch.sort(key=lambda x: x['dist_work'])
             notify_batch(valid_batch)
             
-        # Update history
         data["ids"] = list(set(data["ids"] + current_ids))
         
-        # Only send heartbeat if we didn't just spam a forced relist
         if not FORCE_RELIST and (time.time() - data.get("last_heartbeat", 0)) > HEARTBEAT_INTERVAL:
             send_discord_embed("✅ Active", f"Scanning... Tracking {len(data['ids'])} listings.", 3447003)
             data["last_heartbeat"] = time.time()
