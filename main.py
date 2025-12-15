@@ -20,8 +20,7 @@ FILTER_LAT = 48.8606
 FILTER_LON = 2.3476
 MAX_DISTANCE_FROM_CHATELET = 13.0 
 
-# ☢️ NUCLEAR BLACKLIST
-# If ANY of these words appear ANYWHERE in the listing data, it dies.
+# 🚫 TEXT BLACKLIST (For Title/Description)
 BLACKLIST_KEYWORDS = [
     "colocation", "coloc", "co-location", 
     "partagé", "partager", "partage", "cohabitation",
@@ -33,10 +32,10 @@ BLACKLIST_KEYWORDS = [
 PAYLOAD = {
   "idTool": 42,
   "need_aggregation": True,
-  "page": 1,
+  # "page" will be set dynamically in the loop
   "pageSize": 24,
   "sector": None,
-  "occupationModes": ["alone"],
+  "occupationModes": ["alone"], 
   "location": [
     { "lon": 2.115307, "lat": 49.011465 }, 
     { "lon": 2.571735, "lat": 48.711189 }  
@@ -82,23 +81,27 @@ def generate_commute_link(origin_lat, origin_lon):
     )
 
 def is_valid_listing(item):
-    # 1. DISTANCE CHECK (Chatelet Filter)
+    # 1. STRICT MODE CHECK (The fix you found)
+    # If the system says "house_sharing" or "couple", we kill it immediately.
+    modes = item.get("occupationModes", [])
+    for mode in modes:
+        mode_type = mode.get("type", "").lower()
+        if mode_type != "alone":
+            return False # REJECTED
+
+    # 2. DISTANCE CHECK (Chatelet Filter)
     try:
         loc = item.get("location") or item.get("residence", {}).get("location")
         dist_chatelet = calculate_distance(loc.get("lat"), loc.get("lon"), FILTER_LAT, FILTER_LON)
         if dist_chatelet > MAX_DISTANCE_FROM_CHATELET:
-            return False
+            return False # REJECTED
     except: pass
 
-    # 2. NUCLEAR TEXT CHECK
-    # Dump the ENTIRE listing object to a lowercase string.
-    # This captures hidden fields, codes, IDs, everything.
+    # 3. TEXT BLACKLIST (Backup Check)
     raw_data_str = json.dumps(item).lower()
-    
     for word in BLACKLIST_KEYWORDS:
         if word in raw_data_str:
-            # Found a banned word anywhere? Kill it.
-            return False
+            return False # REJECTED
             
     return True
 
@@ -178,60 +181,86 @@ def notify_batch(sorted_housing_list):
 
 # --- 4. MAIN ---
 
+def fetch_all_pages():
+    """Loops through all pages until no items are left."""
+    all_results = []
+    page = 1
+    
+    while True:
+        print(f"📡 Fetching Page {page}...")
+        PAYLOAD["page"] = page
+        
+        try:
+            response = requests.post(SEARCH_URL, json=PAYLOAD, headers=get_random_header(), timeout=15)
+            if response.status_code != 200:
+                print(f"❌ Error on page {page}: {response.status_code}")
+                break
+                
+            data = response.json()
+            items = data.get("results", {}).get("items", [])
+            
+            if not items:
+                print("✅ No more items found.")
+                break
+                
+            all_results.extend(items)
+            
+            # If we got fewer items than requested, it's the last page
+            if len(items) < PAYLOAD["pageSize"]:
+                break
+                
+            page += 1
+            time.sleep(1) # Be nice to the server
+            
+        except Exception as e:
+            print(f"💥 Crash fetching page {page}: {e}")
+            break
+            
+    return all_results
+
 def check_crous():
     print(f"--- STARTING CHECK (FORCE_RELIST={FORCE_RELIST}) ---")
     time.sleep(random.uniform(2, 5))
 
     data = load_data()
     
-    try:
-        response = requests.post(SEARCH_URL, json=PAYLOAD, headers=get_random_header(), timeout=15)
+    # --- FETCH ALL PAGES ---
+    items = fetch_all_pages()
+    
+    if not items:
+        print("No items found on any page.")
+        return
+
+    valid_batch = []
+    current_ids = []
+
+    for item in items:
+        h_id = item.get("id")
+        current_ids.append(h_id)
         
-        if response.status_code != 200:
-            if data["status"] == "online":
-                send_discord_embed("⚠️ CROUS DOWN", f"HTTP {response.status_code}.", 15548997)
-                data["status"] = "offline"
-                save_data(data)
-            return
+        if not FORCE_RELIST and h_id in data["ids"]: 
+            continue
 
-        if data["status"] == "offline":
-            send_discord_embed("🟢 RECOVERED", "Back online.", 5763719)
-            data["status"] = "online"
+        if is_valid_listing(item):
+            try:
+                loc = item.get("location") or item.get("residence", {}).get("location")
+                dist_work = calculate_distance(loc.get("lat"), loc.get("lon"), WORK_LAT, WORK_LON)
+            except: dist_work = 999
+            
+            valid_batch.append({'data': item, 'dist_work': dist_work})
 
-        items = response.json().get("results", {}).get("items", [])
+    if valid_batch:
+        valid_batch.sort(key=lambda x: x['dist_work'])
+        notify_batch(valid_batch)
         
-        valid_batch = []
-        current_ids = []
-
-        for item in items:
-            h_id = item.get("id")
-            current_ids.append(h_id)
-            
-            if not FORCE_RELIST and h_id in data["ids"]: 
-                continue
-
-            if is_valid_listing(item):
-                try:
-                    loc = item.get("location") or item.get("residence", {}).get("location")
-                    dist_work = calculate_distance(loc.get("lat"), loc.get("lon"), WORK_LAT, WORK_LON)
-                except: dist_work = 999
-                
-                valid_batch.append({'data': item, 'dist_work': dist_work})
-
-        if valid_batch:
-            valid_batch.sort(key=lambda x: x['dist_work'])
-            notify_batch(valid_batch)
-            
-        data["ids"] = list(set(data["ids"] + current_ids))
+    data["ids"] = list(set(data["ids"] + current_ids))
+    data["status"] = "online"
+    
+    if not FORCE_RELIST and (time.time() - data.get("last_heartbeat", 0)) > HEARTBEAT_INTERVAL:
+        send_discord_embed("✅ Active", f"Scanning {len(items)} items across pages.", 3447003)
+        data["last_heartbeat"] = time.time()
         
-        if not FORCE_RELIST and (time.time() - data.get("last_heartbeat", 0)) > HEARTBEAT_INTERVAL:
-            send_discord_embed("✅ Active", f"Scanning... Tracking {len(data['ids'])} listings.", 3447003)
-            data["last_heartbeat"] = time.time()
-            
-        save_data(data)
-
-    except Exception as e:
-        print(f"Error: {e}")
+    save_data(data)
 
 if __name__ == "__main__":
     check_crous()
