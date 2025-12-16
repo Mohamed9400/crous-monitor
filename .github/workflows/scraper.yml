@@ -29,6 +29,9 @@ jobs:
       - name: Install libraries
         run: pip install requests
 
+      - name: Install librariesX
+        run: pip install requests aiohttp
+
       - name: Run Scraper
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
