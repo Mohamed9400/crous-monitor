@@ -146,8 +146,9 @@ def send_discord_embed(title, description, color, url=None, fields=None):
 def notify_batch(sorted_housing_list):
     print(f"🚀 Sending alerts for {len(sorted_housing_list)} rooms...")
     
+    # Send the Header Message FIRST
     if FORCE_RELIST:
-         send_discord_embed("🔄 FORCED REFRESH", f"Displaying **{len(sorted_housing_list)}** available listings sorted by distance to Vallourec.", 3447003)
+         send_discord_embed("🔄 FORCED REFRESH", f"✅ **SUCCESS:** Found **{len(sorted_housing_list)}** listings matching your strict filters.", 3447003)
 
     for i, item in enumerate(sorted_housing_list):
         housing = item['data']
@@ -226,19 +227,20 @@ def check_crous():
     items = fetch_all_pages()
     
     # SAFETY: Only proceed if we actually fetched something.
-    # If the site crashed and gave 0 items, do NOT wipe history.
     if not items:
-        print("⚠️ No items returned from API (or empty). Keeping old history to be safe.")
+        if FORCE_RELIST:
+            send_discord_embed("⚠️ FORCED REFRESH FAILED", "The API returned 0 items total. The site might be buggy or empty.", 15548997)
+        else:
+            print("⚠️ No items returned from API. Skipping update.")
         return
 
     valid_batch = []
-    current_run_ids = [] # Stores IDs found in THIS specific scan
+    current_run_ids = [] 
 
     for item in items:
         h_id = item.get("id")
-        current_run_ids.append(h_id) # Add to current list
+        current_run_ids.append(h_id)
         
-        # Check if it's new (not in the old file)
         is_new = h_id not in data["ids"]
         
         if FORCE_RELIST or is_new:
@@ -250,17 +252,20 @@ def check_crous():
                 
                 valid_batch.append({'data': item, 'dist_work': dist_work})
 
+    # --- NOTIFICATION LOGIC ---
     if valid_batch:
         valid_batch.sort(key=lambda x: x['dist_work'])
         notify_batch(valid_batch)
+    elif FORCE_RELIST:
+        # GUARANTEED FEEDBACK: Even if list is empty, tell the user.
+        send_discord_embed("🚫 FORCED REFRESH RESULTS", "The script ran successfully, but **0 listings** matched your filters (Distance/Blacklist/Mode).", 15105570)
     
-    # --- CRITICAL CHANGE: SNAPSHOT MEMORY ---
-    # We replace the old history with ONLY what we found today.
-    # If an ID was in the file but not in 'current_run_ids', it gets deleted.
+    # --- SNAPSHOT MEMORY ---
     print(f"🔄 Updating history: {len(data['ids'])} -> {len(current_run_ids)} items.")
     data["ids"] = current_run_ids
     data["status"] = "online"
     
+    # Heartbeat (only if not forced)
     if not FORCE_RELIST and (time.time() - data.get("last_heartbeat", 0)) > HEARTBEAT_INTERVAL:
         send_discord_embed("✅ Active", f"Snapshot Memory Active.\nTracking {len(data['ids'])} current listings.", 3447003)
         data["last_heartbeat"] = time.time()
