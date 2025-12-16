@@ -20,7 +20,7 @@ FILTER_LAT = 48.8606
 FILTER_LON = 2.3476
 MAX_DISTANCE_FROM_CHATELET = 13.0 
 
-# 🚫 TEXT BLACKLIST (For Title/Description)
+# 🚫 TEXT BLACKLIST
 BLACKLIST_KEYWORDS = [
     "colocation", "coloc", "co-location", 
     "partagé", "partager", "partage", "cohabitation",
@@ -32,10 +32,9 @@ BLACKLIST_KEYWORDS = [
 PAYLOAD = {
   "idTool": 42,
   "need_aggregation": True,
-  # "page" will be set dynamically in the loop
   "pageSize": 24,
   "sector": None,
-  "occupationModes": ["alone"], 
+  "occupationModes": ["alone"],
   "location": [
     { "lon": 2.115307, "lat": 49.011465 }, 
     { "lon": 2.571735, "lat": 48.711189 }  
@@ -61,7 +60,7 @@ FORCE_RELIST = os.environ.get("FORCE_RELIST", "false").lower() == "true"
 # --- 2. MATH & LOGIC ---
 
 def calculate_distance(lat1, lon1, lat2, lon2):
-    R = 6371 # Earth radius
+    R = 6371 
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
     a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2)**2
@@ -81,27 +80,26 @@ def generate_commute_link(origin_lat, origin_lon):
     )
 
 def is_valid_listing(item):
-    # 1. STRICT MODE CHECK (The fix you found)
-    # If the system says "house_sharing" or "couple", we kill it immediately.
+    # 1. STRICT MODE CHECK
     modes = item.get("occupationModes", [])
     for mode in modes:
         mode_type = mode.get("type", "").lower()
         if mode_type != "alone":
-            return False # REJECTED
+            return False 
 
-    # 2. DISTANCE CHECK (Chatelet Filter)
+    # 2. DISTANCE CHECK
     try:
         loc = item.get("location") or item.get("residence", {}).get("location")
         dist_chatelet = calculate_distance(loc.get("lat"), loc.get("lon"), FILTER_LAT, FILTER_LON)
         if dist_chatelet > MAX_DISTANCE_FROM_CHATELET:
-            return False # REJECTED
+            return False 
     except: pass
 
-    # 3. TEXT BLACKLIST (Backup Check)
+    # 3. TEXT BLACKLIST
     raw_data_str = json.dumps(item).lower()
     for word in BLACKLIST_KEYWORDS:
         if word in raw_data_str:
-            return False # REJECTED
+            return False 
             
     return True
 
@@ -210,7 +208,7 @@ def fetch_all_pages():
                 break
                 
             page += 1
-            time.sleep(1) # Be nice to the server
+            time.sleep(1) 
             
         except Exception as e:
             print(f"💥 Crash fetching page {page}: {e}")
@@ -227,37 +225,44 @@ def check_crous():
     # --- FETCH ALL PAGES ---
     items = fetch_all_pages()
     
+    # SAFETY: Only proceed if we actually fetched something.
+    # If the site crashed and gave 0 items, do NOT wipe history.
     if not items:
-        print("No items found on any page.")
+        print("⚠️ No items returned from API (or empty). Keeping old history to be safe.")
         return
 
     valid_batch = []
-    current_ids = []
+    current_run_ids = [] # Stores IDs found in THIS specific scan
 
     for item in items:
         h_id = item.get("id")
-        current_ids.append(h_id)
+        current_run_ids.append(h_id) # Add to current list
         
-        if not FORCE_RELIST and h_id in data["ids"]: 
-            continue
-
-        if is_valid_listing(item):
-            try:
-                loc = item.get("location") or item.get("residence", {}).get("location")
-                dist_work = calculate_distance(loc.get("lat"), loc.get("lon"), WORK_LAT, WORK_LON)
-            except: dist_work = 999
-            
-            valid_batch.append({'data': item, 'dist_work': dist_work})
+        # Check if it's new (not in the old file)
+        is_new = h_id not in data["ids"]
+        
+        if FORCE_RELIST or is_new:
+            if is_valid_listing(item):
+                try:
+                    loc = item.get("location") or item.get("residence", {}).get("location")
+                    dist_work = calculate_distance(loc.get("lat"), loc.get("lon"), WORK_LAT, WORK_LON)
+                except: dist_work = 999
+                
+                valid_batch.append({'data': item, 'dist_work': dist_work})
 
     if valid_batch:
         valid_batch.sort(key=lambda x: x['dist_work'])
         notify_batch(valid_batch)
-        
-    data["ids"] = list(set(data["ids"] + current_ids))
+    
+    # --- CRITICAL CHANGE: SNAPSHOT MEMORY ---
+    # We replace the old history with ONLY what we found today.
+    # If an ID was in the file but not in 'current_run_ids', it gets deleted.
+    print(f"🔄 Updating history: {len(data['ids'])} -> {len(current_run_ids)} items.")
+    data["ids"] = current_run_ids
     data["status"] = "online"
     
     if not FORCE_RELIST and (time.time() - data.get("last_heartbeat", 0)) > HEARTBEAT_INTERVAL:
-        send_discord_embed("✅ Active", f"Scanning {len(items)} items across pages.", 3447003)
+        send_discord_embed("✅ Active", f"Snapshot Memory Active.\nTracking {len(data['ids'])} current listings.", 3447003)
         data["last_heartbeat"] = time.time()
         
     save_data(data)
