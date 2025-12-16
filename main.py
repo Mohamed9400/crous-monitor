@@ -23,12 +23,10 @@ SCHOOL_LAT = 48.8769
 SCHOOL_LON = 2.3655
 SCHOOL_ADDR = "ISTEC, 128 Quai de Jemmapes, 75010 Paris"
 
-# ⚡ CONCURRENCY LIMIT (Speed vs Safety)
-# 10 simultaneous checks is fast but polite.
+# ⚡ CONCURRENCY LIMIT
 MAX_CONCURRENT_REQUESTS = 10 
 
-# 📍 STRICT IDF ZONE (Your Custom Bounding Box)
-# This removes Reims, Normandy, etc.
+# 📍 STRICT IDF ZONE (Your Coordinates)
 PAYLOAD = {
   "idTool": 42,
   "need_aggregation": True,
@@ -36,8 +34,8 @@ PAYLOAD = {
   "sector": None,
   "occupationModes": ["alone"], 
   "location": [
-    { "lon": 1.4462445, "lat": 49.241431 }, # Top Left (West/North)
-    { "lon": 3.5592208, "lat": 48.1201456 } # Bottom Right (East/South)
+    { "lon": 1.4462445, "lat": 49.241431 }, 
+    { "lon": 3.5592208, "lat": 48.1201456 }
   ],
   "residence": None,
   "precision": 4,
@@ -89,8 +87,8 @@ def get_header():
 
 async def check_availability_async(session, housing_id, semaphore):
     """
-    Async Ghost Buster.
-    Uses a semaphore to limit how many requests run at once.
+    Async Ghost Buster. 
+    Returns True if 'periodsAvailable' has data. False otherwise.
     """
     async with semaphore:
         today = datetime.now().strftime("%Y-%m-%d")
@@ -111,19 +109,30 @@ async def check_availability_async(session, housing_id, semaphore):
                     if data.get("periodsAvailable"):
                         return True
         except:
-            return True # Fail-open: If API lags, don't delete valid housing.
+            return False # Assume Ghost on error to be safe
             
         return False
 
 # --- 4. DATA MANAGEMENT ---
 
 def load_data():
+    # Schema: all_seen (Everything currently on site), active (Bookable), ghosts (Unbookable)
+    default = {"all_seen": [], "active": [], "ghosts": [], "last_heartbeat": 0}
     if os.path.exists(HISTORY_FILE):
         try:
             with open(HISTORY_FILE, "r") as f:
-                return json.load(f)
+                data = json.load(f)
+                # Migration logic if upgrading from V6
+                if "all_seen" not in data:
+                    return {
+                        "all_seen": data.get("ids", []) + data.get("ghost_ids", []),
+                        "active": data.get("ids", []),
+                        "ghosts": data.get("ghost_ids", []),
+                        "last_heartbeat": 0
+                    }
+                return data
         except: pass
-    return {"ids": [], "last_heartbeat": 0, "status": "online"}
+    return default
 
 def save_data(data):
     with open(HISTORY_FILE, "w") as f:
@@ -133,7 +142,7 @@ def send_discord_embed(title, description, color, url=None, fields=None, image=N
     if not DISCORD_WEBHOOK_URL: return
     embed = {
         "title": title, "description": description, "color": color,
-        "footer": {"text": f"🤖 CrousBot V5 (Turbo) • {datetime.now().strftime('%H:%M')}"}
+        "footer": {"text": f"🤖 CrousBot V7 • {datetime.now().strftime('%H:%M')}"}
     }
     if url: embed["url"] = url
     if fields: embed["fields"] = fields
@@ -144,13 +153,16 @@ def send_discord_embed(title, description, color, url=None, fields=None, image=N
         time.sleep(0.5)
     except: pass
 
-def notify_batch(sorted_list):
-    print(f"🚀 Sending alerts for {len(sorted_list)} verified rooms...")
+def notify_items(items, alert_type):
+    """
+    Sends alerts only for items entering the 'Active' list.
+    """
+    print(f"🚀 Sending {len(items)} alerts ({alert_type})...")
     
-    if FORCE_RELIST:
-         send_discord_embed("🔄 FORCED REFRESH", f"Found **{len(sorted_list)}** bookable listings in IDF (Ghosts removed).", 3447003)
+    if FORCE_RELIST and alert_type == "FORCED":
+         send_discord_embed("🔄 FORCED REFRESH", f"Displaying **{len(items)}** currently bookable listings.", 3447003)
 
-    for i, item in enumerate(sorted_list):
+    for item in items:
         h = item['data']
         stats = item['stats']
         
@@ -167,7 +179,16 @@ def notify_batch(sorted_list):
 
         link_work, link_school = generate_commute_links(stats['lat'], stats['lon'])
 
-        rank = "🥇" if i == 0 else "🥈" if i == 1 else "🥉" if i == 2 else "🏠"
+        # Dynamic Titles
+        if alert_type == "WAKE_UP":
+            title = f"👻 GHOST WOKE UP: {residence}"
+            color = 15105570 # Orange
+        elif alert_type == "NEW":
+            title = f"✨ NEW DROP: {residence}"
+            color = 5763719 # Green
+        else:
+            title = f"🏡 FOUND: {residence}"
+            color = 3447003 # Blue
         
         fields = [
             {"name": "🏭 Vallourec", "value": f"**{stats['dist_work']} km**\n[Route]({link_work})", "inline": True},
@@ -175,12 +196,13 @@ def notify_batch(sorted_list):
             {"name": "💰 Price", "value": f"**{price}**", "inline": True}
         ]
         
-        send_discord_embed(f"{rank} {residence}", f"**Score:** {stats['score_avg']} km avg\n[👉 **BOOK NOW**]({crous_url})", 5763719, crous_url, fields, img_url)
+        desc = f"**Score:** {stats['score_avg']} km avg\n[👉 **BOOK NOW**]({crous_url})"
+        send_discord_embed(title, desc, color, crous_url, fields, img_url)
 
-# --- 5. MAIN ASYNC PROCESS ---
+# --- 5. MAIN PROCESS ---
 
 def fetch_all_pages_sync():
-    """Fetches list sync (fast enough for pagination)."""
+    """Download EVERYTHING on the map."""
     all_results = []
     page = 1
     while True:
@@ -198,52 +220,48 @@ def fetch_all_pages_sync():
         except: break
     return all_results
 
-async def main_async_audit(candidates):
-    """Parallel Audit Engine."""
+async def audit_candidates(candidates):
+    """
+    Check availability for a list of items.
+    Returns the items enriched with 'bookable' boolean and 'stats'.
+    """
     semaphore = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
-    valid_results = []
+    results = []
     
     async with aiohttp.ClientSession() as session:
         tasks = []
-        # Create audit tasks for all candidates
         for item in candidates:
             h_id = item.get("id")
             tasks.append((item, check_availability_async(session, h_id, semaphore)))
         
-        print(f"⚡ Turbo-Auditing {len(tasks)} items...")
+        print(f"⚡ Auditing {len(tasks)} items...")
+        audit_results = await asyncio.gather(*[t[1] for t in tasks])
         
-        # Run them all at once
-        results = await asyncio.gather(*[t[1] for t in tasks])
-        
-        # Process results
-        for i, is_available in enumerate(results):
+        for i, is_bookable in enumerate(audit_results):
             item = tasks[i][0]
-            if is_available:
-                try:
-                    loc = item.get("location") or item.get("residence", {}).get("location")
-                    lat, lon = loc.get("lat"), loc.get("lon")
-                    
-                    d_work = calculate_distance(lat, lon, WORK_LAT, WORK_LON)
-                    d_school = calculate_distance(lat, lon, SCHOOL_LAT, SCHOOL_LON)
-                    avg_score = round((d_work + d_school) / 2, 2)
-                    
-                    valid_results.append({
-                        'data': item,
-                        'stats': {
-                            'lat': lat, 'lon': lon,
-                            'dist_work': d_work,
-                            'dist_school': d_school,
-                            'score_avg': avg_score
-                        }
-                    })
-                except: pass
-            else:
-                print(f"👻 Ghost killed: {item.get('id')}")
-
-    return valid_results
+            try:
+                loc = item.get("location") or item.get("residence", {}).get("location")
+                lat, lon = loc.get("lat"), loc.get("lon")
+                d_work = calculate_distance(lat, lon, WORK_LAT, WORK_LON)
+                d_school = calculate_distance(lat, lon, SCHOOL_LAT, SCHOOL_LON)
+                
+                results.append({
+                    'id': item.get("id"),
+                    'data': item,
+                    'bookable': is_bookable,
+                    'stats': {
+                        'lat': lat, 'lon': lon,
+                        'dist_work': d_work,
+                        'dist_school': d_school,
+                        'score_avg': round((d_work + d_school) / 2, 2)
+                    }
+                })
+            except: pass
+            
+    return results
 
 def check_crous():
-    print(f"--- STARTING V5 TURBO (FORCE={FORCE_RELIST}) ---")
+    print(f"--- STARTING V7 RECONCILIATION (FORCE={FORCE_RELIST}) ---")
     
     # 1. Health Check
     try:
@@ -252,45 +270,89 @@ def check_crous():
             return
     except: pass
 
-    data = load_data()
-    raw_items = fetch_all_pages_sync()
+    # 2. Load History (The State)
+    state = load_data()
     
+    # 3. Fetch "Current Reality"
+    raw_items = fetch_all_pages_sync()
     if not raw_items:
-        if FORCE_RELIST: send_discord_embed("⚠️ EMPTY", "No listings in IDF.", 15548997)
+        if FORCE_RELIST: send_discord_embed("⚠️ EMPTY", "No listings found in IDF.", 15548997)
         return
 
-    # 2. Filter Candidates (Candidates = New IDs OR Force Relist)
-    candidates = []
-    current_ids = []
-    
+    # 4. Filter Surface Level (Only "Alone")
+    # This creates the "Current on Site" list to compare against history
+    current_on_site = []
     for item in raw_items:
-        h_id = item.get("id")
-        current_ids.append(h_id) # We track everything we see for history
-        
-        # Filter Logic: Must be "Alone" + (New ID OR Force Mode)
         modes = [m.get("type", "").lower() for m in item.get("occupationModes", [])]
         if "alone" in modes and "house_sharing" not in modes and "couple" not in modes:
-            if FORCE_RELIST or (h_id not in data["ids"]):
-                candidates.append(item)
+            current_on_site.append(item)
 
-    # 3. Async Audit
-    if candidates:
-        verified_batch = asyncio.run(main_async_audit(candidates))
+    # 5. Audit EVERYONE currently on site (The Re-Check)
+    # We audit all of them because a Ghost might have woken up, or an Active might have died.
+    audit_results = asyncio.run(audit_candidates(current_on_site))
+    
+    # 6. Sorting Hat (The Diffing Engine)
+    
+    # New Lists for next save
+    next_all_seen = []
+    next_active = []
+    next_ghosts = []
+    
+    # Notification Queues
+    notify_new = []
+    notify_wakeup = []
+    notify_forced = []
+
+    for res in audit_results:
+        h_id = res['id']
+        is_bookable = res['bookable']
         
-        if verified_batch:
-            verified_batch.sort(key=lambda x: x['stats']['score_avg'])
-            notify_batch(verified_batch)
-        elif FORCE_RELIST:
-            send_discord_embed("🚫 NO RESULTS", "Listings found but rejected by Ghost Filter.", 15105570)
+        # Add to Master List (It exists)
+        next_all_seen.append(h_id)
+        
+        # Determine Status
+        if is_bookable:
+            next_active.append(h_id)
             
-    # 4. Save State
-    print(f"🔄 Snapshot: Tracking {len(current_ids)} IDs.")
-    data["ids"] = current_ids
-    if not FORCE_RELIST and (time.time() - data.get("last_heartbeat", 0)) > HEARTBEAT_INTERVAL:
-        send_discord_embed("✅ Active", f"V5 Turbo Active.\nTracking {len(data['ids'])} items.", 3447003)
-        data["last_heartbeat"] = time.time()
+            # NOTIFICATION LOGIC
+            if FORCE_RELIST:
+                notify_forced.append(res)
+            elif h_id in state["ghosts"]:
+                notify_wakeup.append(res) # Ghost -> Active
+            elif h_id not in state["all_seen"]:
+                notify_new.append(res)    # Completely New -> Active
+            # Else: Was Active, Stays Active (Silent)
+            
+        else:
+            next_ghosts.append(h_id)
+            # Ghosts are always silent
+            
+    # 7. Fire Notifications
+    if FORCE_RELIST:
+        notify_forced.sort(key=lambda x: x['stats']['score_avg'])
+        notify_items(notify_forced, "FORCED")
+    else:
+        if notify_wakeup:
+            notify_wakeup.sort(key=lambda x: x['stats']['score_avg'])
+            notify_items(notify_wakeup, "WAKE_UP")
         
-    save_data(data)
+        if notify_new:
+            notify_new.sort(key=lambda x: x['stats']['score_avg'])
+            notify_items(notify_new, "NEW")
+
+    # 8. Save New State (Garbage Collection is automatic)
+    # Any ID that was in 'state' but NOT in 'next_all_seen' is now gone forever.
+    state["all_seen"] = next_all_seen
+    state["active"] = next_active
+    state["ghosts"] = next_ghosts
+    
+    print(f"📊 State Update: {len(next_active)} Active | {len(next_ghosts)} Ghosts | {len(next_all_seen)} Total")
+    
+    if not FORCE_RELIST and (time.time() - state.get("last_heartbeat", 0)) > HEARTBEAT_INTERVAL:
+        send_discord_embed("✅ V7 State", f"Active: {len(next_active)}\nGhosts: {len(next_ghosts)}", 3447003)
+        state["last_heartbeat"] = time.time()
+        
+    save_data(state)
 
 if __name__ == "__main__":
     check_crous()
