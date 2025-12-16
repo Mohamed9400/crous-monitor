@@ -66,13 +66,15 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 
 def generate_commute_links(lat, lon):
     now = datetime.now()
+    # Set target to tomorrow morning 07:30 to get realistic transit times
     target_time = now.replace(hour=7, minute=30, second=0, microsecond=0)
     if target_time < now: target_time += timedelta(days=1)
     date_str = target_time.strftime("%Y-%m-%d") 
     
     def make_link(dest):
         d_enc = urllib.parse.quote(dest)
-        return f"http://googleusercontent.com/maps.google.com/maps?saddr={lat},{lon}&daddr={d_enc}&dirflg=r&ttype=dep&date={date_str}&time=07:30"
+        # FIXED LINK FORMAT HERE
+        return f"https://www.google.com/maps?saddr={lat},{lon}&daddr={d_enc}&dirflg=r&ttype=dep&date={date_str}&time=07:30"
 
     return make_link(WORK_ADDR), make_link(SCHOOL_ADDR)
 
@@ -142,7 +144,7 @@ def send_discord_embed(title, description, color, url=None, fields=None, image=N
     if not DISCORD_WEBHOOK_URL: return
     embed = {
         "title": title, "description": description, "color": color,
-        "footer": {"text": f"🤖 CrousBot V7 • {datetime.now().strftime('%H:%M')}"}
+        "footer": {"text": f"🤖 CrousBot V7.1 • {datetime.now().strftime('%H:%M')}"}
     }
     if url: embed["url"] = url
     if fields: embed["fields"] = fields
@@ -261,7 +263,7 @@ async def audit_candidates(candidates):
     return results
 
 def check_crous():
-    print(f"--- STARTING V7 RECONCILIATION (FORCE={FORCE_RELIST}) ---")
+    print(f"--- STARTING V7.1 RECONCILIATION (FORCE={FORCE_RELIST}) ---")
     
     # 1. Health Check
     try:
@@ -280,7 +282,6 @@ def check_crous():
         return
 
     # 4. Filter Surface Level (Only "Alone")
-    # This creates the "Current on Site" list to compare against history
     current_on_site = []
     for item in raw_items:
         modes = [m.get("type", "").lower() for m in item.get("occupationModes", [])]
@@ -288,17 +289,13 @@ def check_crous():
             current_on_site.append(item)
 
     # 5. Audit EVERYONE currently on site (The Re-Check)
-    # We audit all of them because a Ghost might have woken up, or an Active might have died.
     audit_results = asyncio.run(audit_candidates(current_on_site))
     
     # 6. Sorting Hat (The Diffing Engine)
-    
-    # New Lists for next save
     next_all_seen = []
     next_active = []
     next_ghosts = []
     
-    # Notification Queues
     notify_new = []
     notify_wakeup = []
     notify_forced = []
@@ -307,25 +304,20 @@ def check_crous():
         h_id = res['id']
         is_bookable = res['bookable']
         
-        # Add to Master List (It exists)
+        # Add to Master List
         next_all_seen.append(h_id)
         
         # Determine Status
         if is_bookable:
             next_active.append(h_id)
-            
-            # NOTIFICATION LOGIC
             if FORCE_RELIST:
                 notify_forced.append(res)
             elif h_id in state["ghosts"]:
                 notify_wakeup.append(res) # Ghost -> Active
             elif h_id not in state["all_seen"]:
-                notify_new.append(res)    # Completely New -> Active
-            # Else: Was Active, Stays Active (Silent)
-            
+                notify_new.append(res)    # New -> Active
         else:
             next_ghosts.append(h_id)
-            # Ghosts are always silent
             
     # 7. Fire Notifications
     if FORCE_RELIST:
@@ -340,8 +332,7 @@ def check_crous():
             notify_new.sort(key=lambda x: x['stats']['score_avg'])
             notify_items(notify_new, "NEW")
 
-    # 8. Save New State (Garbage Collection is automatic)
-    # Any ID that was in 'state' but NOT in 'next_all_seen' is now gone forever.
+    # 8. Save New State
     state["all_seen"] = next_all_seen
     state["active"] = next_active
     state["ghosts"] = next_ghosts
