@@ -1,9 +1,9 @@
-name: Check CROUS
+name: CROUS Sniper
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # Runs every 15 minutes automatically
-  workflow_dispatch: # Allows manual click
+    - cron: '*/5 * * * *'  # Every 5 minutes
+  workflow_dispatch:
     inputs:
       relist_all:
         description: 'Force list ALL available housing?'
@@ -15,34 +15,32 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  sniper:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+      
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
-      - name: Install libraries
-        run: pip install requests
-
-      - name: Install librariesX
-        run: pip install requests aiohttp
-
-      - name: Run Scraper
+      
+      - name: Install dependencies
+        run: |
+          pip install requests aiohttp
+      
+      - name: Run Hybrid Sniper
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          # Pass the checkbox value to Python
-          FORCE_RELIST: ${{ github.event.inputs.relist_all }} 
+          FORCE_RELIST: ${{ github.event.inputs.relist_all }}
         run: python main.py
-
-      - name: Save History
+      
+      - name: Commit changes
         run: |
           git config --global user.name "CROUS Bot"
           git config --global user.email "bot@noreply.github.com"
-          git add history.json
-          git commit -m "Update housing history [skip ci]" || echo "No changes to commit"
+          git add history.json crous_monitor.log
+          git commit -m "🤖 Update housing state [skip ci]" || echo "No changes to commit"
           git push

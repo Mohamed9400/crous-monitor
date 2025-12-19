@@ -7,10 +7,13 @@ import time
 import random
 import urllib.parse
 import math
+import re
 from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Set, Tuple
 
 # --- 1. CONFIGURATION ---
-SEARCH_URL = "https://trouverunlogement.lescrous.fr/api/fr/search/42" 
+SEARCH_URL = "https://trouverunlogement.lescrous.fr/api/fr/search/42"
+AVAILABILITY_URL = "https://trouverunlogement.lescrous.fr/api/fr/tools/42/accommodations"
 HEALTH_URL = "https://trouverunlogement.lescrous.fr/api/health"
 
 # 🏭 TARGET 1: Vallourec Meudon (Work)
@@ -24,40 +27,123 @@ SCHOOL_LON = 2.3655
 SCHOOL_ADDR = "ISTEC, 128 Quai de Jemmapes, 75010 Paris"
 
 # ⚡ CONCURRENCY LIMIT
-MAX_CONCURRENT_REQUESTS = 10 
+MAX_CONCURRENT_REQUESTS = 10
 
-# 📍 STRICT IDF ZONE (Your Coordinates)
+# 📍 STRICT IDF ZONE
 PAYLOAD = {
-  "idTool": 42,
-  "need_aggregation": True,
-  "pageSize": 24,
-  "sector": None,
-  "occupationModes": ["alone"], 
-  "location": [
-    { "lon": 1.4462445, "lat": 49.241431 }, 
-    { "lon": 3.5592208, "lat": 48.1201456 }
-  ],
-  "residence": None,
-  "precision": 4,
-  "equipment": [],
-  "adaptedPmr": False,
-  "toolMechanism": "flow"
+    "idTool": 42,
+    "need_aggregation": True,
+    "pageSize": 24,
+    "sector": None,
+    "occupationModes": ["alone"],
+    "location": [
+        {"lon": 1.4462445, "lat": 49.241431},
+        {"lon": 3.5592208, "lat": 48.1201456}
+    ],
+    "residence": None,
+    "precision": 4,
+    "equipment": [],
+    "adaptedPmr": False,
+    "toolMechanism": "flow"
 }
 
 USER_AGENTS = [
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
 ]
 
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK")
 HISTORY_FILE = "history.json"
-HEARTBEAT_INTERVAL = 86400
-FORCE_RELIST = os.environ.get("FORCE_RELIST", "false").lower() == "true"
+MASTER_LIST_FILE = "idf_master_list.json"
+LOG_FILE = "crous_monitor.log"
+HEARTBEAT_INTERVAL = 86400  # 24 hours
+FORCE_RELIST = os.getenv("FORCE_RELIST", "false").lower() == "true"
 
-# --- 2. MATH & GEOMETRY ---
+# Colors for Discord embeds
+COLORS = {
+    "NEW": 5763719,       # Green
+    "WAKE_UP": 15105570,  # Orange
+    "HIDDEN_GEM": 10181046,  # Purple
+    "FORCED": 3447003,    # Blue
+    "ERROR": 15548997     # Red
+}
+
+# --- 2. LOGGING SYSTEM ---
+
+def log_message(message: str) -> None:
+    """Add message to rotating log file."""
+    timestamp = datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
+    log_entry = f"{timestamp} {message}\n"
+    
+    # Rotate log if too large (keep last 1000 lines)
+    if os.path.exists(LOG_FILE):
+        with open(LOG_FILE, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        
+        if len(lines) >= 1000:
+            lines = lines[-500:]
+            with open(LOG_FILE, 'w', encoding='utf-8') as f:
+                f.writelines(lines)
+    
+    # Append new log entry
+    with open(LOG_FILE, 'a', encoding='utf-8') as f:
+        f.write(log_entry)
+    
+    print(message)
+
+# --- 3. LOAD MASTER LIST ---
+
+def load_master_list() -> List[Dict]:
+    """Load IDF master list - now contains ONLY bookable residences."""
+    try:
+        if os.path.exists(MASTER_LIST_FILE):
+            with open(MASTER_LIST_FILE, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                
+                # Transform to expected format
+                candidates = []
+                for item in data:
+                    candidates.append({
+                        "id": item["id"],
+                        "data": item.get("data", {
+                            "id": item["id"],
+                            "title": item["title"],
+                            "address": item["address"],
+                            "location": {"lat": item["lat"], "lon": item["lon"]},
+                            "occupationModes": [{
+                                "type": "alone",
+                                "rent": {"min": item["price"] * 100}
+                            }]
+                        }),
+                        "source": "master_list",
+                        "price": item["price"]
+                    })
+                return candidates
+        else:
+            log_message("⚠️  Master list not found, running in search-only mode")
+            return []
+    except Exception as e:
+        log_message(f"❌ Error loading master list: {e}")
+        return []
+
+
+def extract_residence_id_from_master(item: Dict) -> Dict:
+    """Extract basic info from master list item for auditing."""
+    return {
+        "id": item.get("id"),
+        "data": {
+            "id": item.get("id"),
+            "title": item.get("title", "Unknown"),
+            "address": item.get("address", ""),
+            "location": {"lat": item.get("lat"), "lon": item.get("lon")}
+        },
+        "source": "master_list"
+    }
+
+# --- 4. MATH & GEOMETRY (UNCHANGED) ---
 
 def calculate_distance(lat1, lon1, lat2, lon2):
-    R = 6371 
+    R = 6371
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
     a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2)**2
@@ -66,19 +152,18 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 
 def generate_commute_links(lat, lon):
     now = datetime.now()
-    # Set target to tomorrow morning 07:30 to get realistic transit times
     target_time = now.replace(hour=7, minute=30, second=0, microsecond=0)
-    if target_time < now: target_time += timedelta(days=1)
-    date_str = target_time.strftime("%Y-%m-%d") 
+    if target_time < now:
+        target_time += timedelta(days=1)
+    date_str = target_time.strftime("%Y-%m-%d")
     
     def make_link(dest):
         d_enc = urllib.parse.quote(dest)
-        # FIXED LINK FORMAT HERE
         return f"https://www.google.com/maps?saddr={lat},{lon}&daddr={d_enc}&dirflg=r&ttype=dep&date={date_str}&time=07:30"
-
+    
     return make_link(WORK_ADDR), make_link(SCHOOL_ADDR)
 
-# --- 3. ASYNC CORE LOGIC ---
+# --- 5. ASYNC CORE LOGIC ---
 
 def get_header():
     return {
@@ -88,16 +173,13 @@ def get_header():
     }
 
 async def check_availability_async(session, housing_id, semaphore):
-    """
-    Async Ghost Buster. 
-    Returns True if 'periodsAvailable' has data. False otherwise.
-    """
+    """Check if a residence is actually available for booking."""
     async with semaphore:
         today = datetime.now().strftime("%Y-%m-%d")
         next_year = datetime.now().year + 1
         end_date = f"{next_year}-08-31"
         
-        url = f"https://trouverunlogement.lescrous.fr/api/fr/tools/42/accommodations/{housing_id}/availabilities"
+        url = f"{AVAILABILITY_URL}/{housing_id}/availabilities"
         params = {
             "occupationMode": "alone",
             "arrivalDate": today,
@@ -108,242 +190,487 @@ async def check_availability_async(session, housing_id, semaphore):
             async with session.get(url, params=params, headers=get_header(), timeout=8) as response:
                 if response.status == 200:
                     data = await response.json()
-                    if data.get("periodsAvailable"):
-                        return True
-        except:
-            return False # Assume Ghost on error to be safe
-            
+                    return bool(data.get("periodsAvailable"))
+                elif response.status == 404:
+                    return False  # Residence no longer exists
+        except Exception as e:
+            return False
+        
         return False
 
-# --- 4. DATA MANAGEMENT ---
-
-def load_data():
-    # Schema: all_seen (Everything currently on site), active (Bookable), ghosts (Unbookable)
-    default = {"all_seen": [], "active": [], "ghosts": [], "last_heartbeat": 0}
-    if os.path.exists(HISTORY_FILE):
-        try:
-            with open(HISTORY_FILE, "r") as f:
-                data = json.load(f)
-                # Migration logic if upgrading from V6
-                if "all_seen" not in data:
-                    return {
-                        "all_seen": data.get("ids", []) + data.get("ghost_ids", []),
-                        "active": data.get("ids", []),
-                        "ghosts": data.get("ghost_ids", []),
-                        "last_heartbeat": 0
-                    }
-                return data
-        except: pass
-    return default
-
-def save_data(data):
-    with open(HISTORY_FILE, "w") as f:
-        json.dump(data, f)
-
-def send_discord_embed(title, description, color, url=None, fields=None, image=None):
-    if not DISCORD_WEBHOOK_URL: return
-    embed = {
-        "title": title, "description": description, "color": color,
-        "footer": {"text": f"🤖 CrousBot V7.1 • {datetime.now().strftime('%H:%M')}"}
-    }
-    if url: embed["url"] = url
-    if fields: embed["fields"] = fields
-    if image: embed["thumbnail"] = {"url": image}
-    
-    try:
-        requests.post(DISCORD_WEBHOOK_URL, json={"embeds": [embed]})
-        time.sleep(0.5)
-    except: pass
-
-def notify_items(items, alert_type):
+async def audit_candidates(candidates: List[Dict]) -> List[Dict]:
     """
-    Sends alerts only for items entering the 'Active' list.
-    """
-    print(f"🚀 Sending {len(items)} alerts ({alert_type})...")
-    
-    if FORCE_RELIST and alert_type == "FORCED":
-         send_discord_embed("🔄 FORCED REFRESH", f"Displaying **{len(items)}** currently bookable listings.", 3447003)
-
-    for item in items:
-        h = item['data']
-        stats = item['stats']
-        
-        residence = h.get("residence", {}).get("label", "Unknown")
-        h_id = h.get("id")
-        crous_url = f"https://trouverunlogement.lescrous.fr/tools/42/accommodations/{h_id}"
-        
-        img_url = None
-        if h.get("medias"):
-            img_url = f"https://trouverunlogement.lescrous.fr/media/{h['medias'][0]['src']}"
-
-        try: price = f"{h['occupationModes'][0]['rent']['min'] / 100}€"
-        except: price = "N/A"
-
-        link_work, link_school = generate_commute_links(stats['lat'], stats['lon'])
-
-        # Dynamic Titles
-        if alert_type == "WAKE_UP":
-            title = f"👻 GHOST WOKE UP: {residence}"
-            color = 15105570 # Orange
-        elif alert_type == "NEW":
-            title = f"✨ NEW DROP: {residence}"
-            color = 5763719 # Green
-        else:
-            title = f"🏡 FOUND: {residence}"
-            color = 3447003 # Blue
-        
-        fields = [
-            {"name": "🏭 Vallourec", "value": f"**{stats['dist_work']} km**\n[Route]({link_work})", "inline": True},
-            {"name": "🎓 ISTEC", "value": f"**{stats['dist_school']} km**\n[Route]({link_school})", "inline": True},
-            {"name": "💰 Price", "value": f"**{price}**", "inline": True}
-        ]
-        
-        desc = f"**Score:** {stats['score_avg']} km avg\n[👉 **BOOK NOW**]({crous_url})"
-        send_discord_embed(title, desc, color, crous_url, fields, img_url)
-
-# --- 5. MAIN PROCESS ---
-
-def fetch_all_pages_sync():
-    """Download EVERYTHING on the map."""
-    all_results = []
-    page = 1
-    while True:
-        print(f"📡 Fetching Page {page}...")
-        PAYLOAD["page"] = page
-        try:
-            r = requests.post(SEARCH_URL, json=PAYLOAD, headers=get_header(), timeout=15)
-            if r.status_code != 200: break
-            items = r.json().get("results", {}).get("items", [])
-            if not items: break
-            all_results.extend(items)
-            if len(items) < PAYLOAD["pageSize"]: break
-            page += 1
-            time.sleep(0.5)
-        except: break
-    return all_results
-
-async def audit_candidates(candidates):
-    """
-    Check availability for a list of items.
-    Returns the items enriched with 'bookable' boolean and 'stats'.
+    Check availability for search results (master list already validated).
     """
     semaphore = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
     results = []
     
     async with aiohttp.ClientSession() as session:
         tasks = []
-        for item in candidates:
-            h_id = item.get("id")
-            tasks.append((item, check_availability_async(session, h_id, semaphore)))
+        for candidate in candidates:
+            source = candidate.get("source", "unknown")
+            
+            if source == "master_list":
+                # Already validated as bookable, just add to results
+                tasks.append((candidate, asyncio.sleep(0)))  # No API call needed
+            else:
+                # Search result - need to check availability
+                housing_id = candidate.get("id")
+                tasks.append((candidate, check_availability_async(session, housing_id, semaphore)))
         
-        print(f"⚡ Auditing {len(tasks)} items...")
+        log_message(f"⚡ Auditing {len(tasks)} candidates...")
         audit_results = await asyncio.gather(*[t[1] for t in tasks])
         
-        for i, is_bookable in enumerate(audit_results):
-            item = tasks[i][0]
+        for i, result in enumerate(audit_results):
+            candidate = tasks[i][0]
             try:
-                loc = item.get("location") or item.get("residence", {}).get("location")
-                lat, lon = loc.get("lat"), loc.get("lon")
-                d_work = calculate_distance(lat, lon, WORK_LAT, WORK_LON)
-                d_school = calculate_distance(lat, lon, SCHOOL_LAT, SCHOOL_LON)
+                # Get stats
+                data = candidate.get("data", {})
+                stats = get_stats_from_data(data)
+                
+                # Determine if bookable
+                if candidate.get("source") == "master_list":
+                    is_bookable = True
+                    price = candidate.get("price")
+                else:
+                    is_bookable = result  # From availability check
+                    price = extract_price_from_data(data)
                 
                 results.append({
-                    'id': item.get("id"),
-                    'data': item,
+                    'id': candidate.get("id"),
+                    'data': data,
                     'bookable': is_bookable,
-                    'stats': {
-                        'lat': lat, 'lon': lon,
-                        'dist_work': d_work,
-                        'dist_school': d_school,
-                        'score_avg': round((d_work + d_school) / 2, 2)
-                    }
+                    'source': candidate.get("source"),
+                    'has_price': price is not None,
+                    'price': price,
+                    'stats': stats
                 })
-            except: pass
-            
+            except Exception as e:
+                log_message(f"⚠️  Error processing candidate {candidate.get('id')}: {e}")
+                continue
+    
     return results
 
-def check_crous():
-    print(f"--- STARTING V7.1 RECONCILIATION (FORCE={FORCE_RELIST}) ---")
-    
-    # 1. Health Check
-    try:
-        if not requests.get(HEALTH_URL, headers=get_header(), timeout=5).json().get("isSystemOnline"):
-            print("❌ CROUS DOWN. Sleeping.")
-            return
-    except: pass
+# --- 6. DATA MANAGEMENT ---
 
-    # 2. Load History (The State)
+def load_data() -> Dict:
+    """Load state from history file."""
+    default = {
+        "all_seen": [],
+        "active": [],
+        "ghosts": [],
+        "hidden_finds": [],
+        "last_heartbeat": 0,
+        "stats": {
+            "total_runs": 0,
+            "hidden_gems_found": 0,
+            "last_run": None
+        }
+    }
+    
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                
+                # Migrate old format if needed
+                if "hidden_finds" not in data:
+                    data["hidden_finds"] = []
+                if "stats" not in data:
+                    data["stats"] = default["stats"]
+                
+                return data
+        except Exception as e:
+            log_message(f"❌ Error loading history: {e}")
+    
+    return default
+
+def save_data(data: Dict) -> None:
+    """Save state to history file."""
+    try:
+        with open(HISTORY_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2)
+    except Exception as e:
+        log_message(f"❌ Error saving history: {e}")
+
+# --- 7. DISCORD NOTIFICATIONS ---
+
+def send_discord_alert(title: str, description: str, color: int, url: str = None, 
+                       fields: List[Dict] = None, image: str = None) -> bool:
+    """Send alert to Discord webhook."""
+    if not DISCORD_WEBHOOK_URL:
+        return False
+    
+    embed = {
+        "title": title,
+        "description": description,
+        "color": color,
+        "footer": {
+            "text": f"🤖 CrousBot V8 • {datetime.now().strftime('%H:%M')}"
+        }
+    }
+    
+    if url:
+        embed["url"] = url
+    if fields:
+        embed["fields"] = fields
+    if image:
+        embed["thumbnail"] = {"url": image}
+    
+    try:
+        response = requests.post(DISCORD_WEBHOOK_URL, json={"embeds": [embed]}, timeout=5)
+        time.sleep(0.5)  # Avoid rate limiting
+        return response.status_code == 204
+    except Exception as e:
+        log_message(f"❌ Discord error: {e}")
+        return False
+
+def notify_items(items: List[Dict], alert_type: str) -> None:
+    """Send notifications for items."""
+    if not items:
+        return
+    
+    log_message(f"📤 Sending {len(items)} {alert_type} alerts...")
+    
+    # Sort by distance score
+    items.sort(key=lambda x: x['stats']['score_avg'])
+    
+    for item in items:
+        data = item['data']
+        stats = item['stats']
+        source = item.get('source', 'unknown')
+        
+        residence = data.get("residence", {}).get("label", data.get("title", "Unknown"))
+        housing_id = data.get("id")
+        booking_url = f"https://trouverunlogement.lescrous.fr/tools/42/accommodations/{housing_id}"
+        
+        # Get image if available
+        image_url = None
+        if data.get("medias"):
+            image_url = f"https://trouverunlogement.lescrous.fr/media/{data['medias'][0]['src']}"
+        
+        # Get price
+        try:
+            price = f"{data['occupationModes'][0]['rent']['min'] / 100}€"
+        except:
+            price = "N/A"
+        
+        # Generate commute links if we have coordinates
+        if stats['lat'] and stats['lon']:
+            link_work, link_school = generate_commute_links(stats['lat'], stats['lon'])
+        else:
+            link_work = link_school = "#"
+        
+        # Determine alert type
+        if alert_type == "HIDDEN_GEM":
+            title = f"🎯 HIDDEN GEM: {residence}"
+            color = COLORS["HIDDEN_GEM"]
+            description = f"**⚠️ NOT in search results!**\n[👉 **BOOK NOW**]({booking_url})"
+        elif alert_type == "NEW":
+            title = f"✨ NEW DROP: {residence}"
+            color = COLORS["NEW"]
+            description = f"**Score:** {stats['score_avg']} km avg\n[👉 **BOOK NOW**]({booking_url})"
+        elif alert_type == "WAKE_UP":
+            title = f"👻 GHOST WOKE UP: {residence}"
+            color = COLORS["WAKE_UP"]
+            description = f"**Score:** {stats['score_avg']} km avg\n[👉 **BOOK NOW**]({booking_url})"
+        elif alert_type == "FORCED":
+            title = f"📋 CURRENT: {residence}"
+            color = COLORS["FORCED"]
+            description = f"**Score:** {stats['score_avg']} km avg\n[👉 **BOOK NOW**]({booking_url})"
+        else:
+            title = f"🏡 FOUND: {residence}"
+            color = COLORS["FORCED"]
+            description = f"**Score:** {stats['score_avg']} km avg\n[👉 **BOOK NOW**]({booking_url})"
+        
+        # Create fields
+        fields = [
+            {
+                "name": "🏭 Vallourec",
+                "value": f"**{stats['dist_work']} km**\n[Route]({link_work})",
+                "inline": True
+            },
+            {
+                "name": "🎓 ISTEC",
+                "value": f"**{stats['dist_school']} km**\n[Route]({link_school})",
+                "inline": True
+            },
+            {
+                "name": "💰 Price",
+                "value": f"**{price}**",
+                "inline": True
+            }
+        ]
+        
+        # Add source info for hidden gems
+        if alert_type == "HIDDEN_GEM":
+            fields.append({
+                "name": "🔍 Source",
+                "value": "Direct ID check (not in search)",
+                "inline": False
+            })
+        
+        success = send_discord_alert(title, description, color, booking_url, fields, image_url)
+        
+        if not success:
+            log_message(f"⚠️  Failed to send alert for {residence}")
+
+# --- 8. SEARCH LOGIC ---
+
+def fetch_search_results() -> List[Dict]:
+    """Fetch visible listings from search API (Source A)."""
+    all_results = []
+    page = 1
+    
+    log_message("🔍 Fetching search results...")
+    
+    while True:
+        PAYLOAD["page"] = page
+        try:
+            response = requests.post(SEARCH_URL, json=PAYLOAD, headers=get_header(), timeout=15)
+            if response.status_code != 200:
+                break
+            
+            data = response.json()
+            items = data.get("results", {}).get("items", [])
+            
+            if not items:
+                break
+            
+            # Filter for "alone" occupation mode only
+            filtered_items = []
+            for item in items:
+                modes = [m.get("type", "").lower() for m in item.get("occupationModes", [])]
+                if "alone" in modes and "house_sharing" not in modes and "couple" not in modes:
+                    filtered_items.append({
+                        "id": item.get("id"),
+                        "data": item,
+                        "source": "search"
+                    })
+            
+            all_results.extend(filtered_items)
+            
+            if len(items) < PAYLOAD["pageSize"]:
+                break
+                
+            page += 1
+            time.sleep(0.3)  # Be polite to the server
+            
+        except Exception as e:
+            log_message(f"❌ Search error on page {page}: {e}")
+            break
+    
+    log_message(f"📊 Found {len(all_results)} visible listings")
+    return all_results
+
+def fetch_master_list_candidates() -> List[Dict]:
+    """Load candidates from master list (Source B)."""
+    master_list = load_master_list()
+    candidates = []
+    
+    for item in master_list:
+        candidates.append(extract_residence_id_from_master(item))
+    
+    log_message(f"📋 Master list: {len(candidates)} residences")
+    return candidates
+
+# --- 9. MAIN PROCESS ---
+
+async def run_hybrid_check() -> Dict:
+    """Main hybrid check combining both sources."""
+    log_message("=" * 60)
+    log_message("🏠 CROUS V8 HYBRID SNIPER - STARTING")
+    log_message("=" * 60)
+    
+    start_time = time.time()
+    
+    # 1. Fetch candidates from both sources
+    search_candidates = fetch_search_results()
+    master_candidates = fetch_master_list_candidates()
+    
+    # 2. Merge and deduplicate
+    all_candidates = []
+    seen_ids = set()
+    
+    # First add search results (Source A - priority)
+    for candidate in search_candidates:
+        candidate_id = candidate.get("id")
+        if candidate_id not in seen_ids:
+            seen_ids.add(candidate_id)
+            all_candidates.append(candidate)
+    
+    # Then add master list candidates (Source B - fill in gaps)
+    for candidate in master_candidates:
+        candidate_id = candidate.get("id")
+        if candidate_id not in seen_ids:
+            seen_ids.add(candidate_id)
+            candidate["source"] = "master_list"
+            all_candidates.append(candidate)
+    
+    log_message(f"📈 Combined: {len(all_candidates)} unique residences")
+    log_message(f"   • From search: {len(search_candidates)}")
+    log_message(f"   • From master list: {len(master_candidates) - (len(master_candidates) - len(seen_ids))}")
+    log_message(f"   • Unique total: {len(all_candidates)}")
+    
+    # 3. Check availability for all candidates
+    if not all_candidates:
+        log_message("⚠️  No candidates to check")
+        return {"success": False, "audit_results": []}
+    
+    audit_results = await audit_candidates(all_candidates)
+    
+    # 4. Analyze results
+    available_items = [r for r in audit_results if r['bookable']]
+    unavailable_items = [r for r in audit_results if not r['bookable']]
+    
+    log_message(f"📊 Availability results:")
+    log_message(f"   • Available: {len(available_items)}")
+    log_message(f"   • Unavailable: {len(unavailable_items)}")
+    
+    # 5. Track sources of available items
+    from_search = [r for r in available_items if r.get('source') == 'search']
+    from_master = [r for r in available_items if r.get('source') == 'master_list']
+    
+    log_message(f"   • From search: {len(from_search)}")
+    log_message(f"   • Hidden gems: {len(from_master)}")
+    
+    duration = time.time() - start_time
+    log_message(f"⏱️  Check completed in {duration:.1f} seconds")
+    
+    return {
+        "success": True,
+        "audit_results": audit_results,
+        "available_items": available_items,
+        "unavailable_items": unavailable_items,
+        "from_search": from_search,
+        "from_master": from_master,
+        "duration": duration
+    }
+
+def check_crous():
+    """Main entry point."""
+    log_message("🚀 Starting CROUS V8 Hybrid Sniper")
+    
+    # Health check
+    try:
+        health = requests.get(HEALTH_URL, headers=get_header(), timeout=5).json()
+        if not health.get("isSystemOnline"):
+            log_message("❌ CROUS system is offline")
+            if DISCORD_WEBHOOK_URL:
+                send_discord_alert("❌ CROUS OFFLINE", 
+                                   "The CROUS system appears to be offline.", 
+                                   COLORS["ERROR"])
+            return
+    except:
+        log_message("⚠️  Could not check CROUS health status")
+    
+    # Load current state
     state = load_data()
     
-    # 3. Fetch "Current Reality"
-    raw_items = fetch_all_pages_sync()
-    if not raw_items:
-        if FORCE_RELIST: send_discord_embed("⚠️ EMPTY", "No listings found in IDF.", 15548997)
-        return
-
-    # 4. Filter Surface Level (Only "Alone")
-    current_on_site = []
-    for item in raw_items:
-        modes = [m.get("type", "").lower() for m in item.get("occupationModes", [])]
-        if "alone" in modes and "house_sharing" not in modes and "couple" not in modes:
-            current_on_site.append(item)
-
-    # 5. Audit EVERYONE currently on site (The Re-Check)
-    audit_results = asyncio.run(audit_candidates(current_on_site))
-    
-    # 6. Sorting Hat (The Diffing Engine)
-    next_all_seen = []
-    next_active = []
-    next_ghosts = []
-    
-    notify_new = []
-    notify_wakeup = []
-    notify_forced = []
-
-    for res in audit_results:
-        h_id = res['id']
-        is_bookable = res['bookable']
+    # Run hybrid check
+    try:
+        result = asyncio.run(run_hybrid_check())
         
-        # Add to Master List
-        next_all_seen.append(h_id)
-        
-        # Determine Status
-        if is_bookable:
-            next_active.append(h_id)
+        if not result["success"] or not result["audit_results"]:
             if FORCE_RELIST:
-                notify_forced.append(res)
-            elif h_id in state["ghosts"]:
-                notify_wakeup.append(res) # Ghost -> Active
-            elif h_id not in state["all_seen"]:
-                notify_new.append(res)    # New -> Active
-        else:
-            next_ghosts.append(h_id)
+                send_discord_alert("⚠️ EMPTY RESULTS", 
+                                   "No listings found in IDF during forced check.", 
+                                   COLORS["ERROR"])
+            return
+        
+        # Prepare notifications
+        audit_results = result["audit_results"]
+        available_items = result["available_items"]
+        
+        # Identify what's new
+        notify_new = []
+        notify_wakeup = []
+        notify_hidden = []
+        notify_forced = []
+        
+        for item in available_items:
+            item_id = item['id']
             
-    # 7. Fire Notifications
-    if FORCE_RELIST:
-        notify_forced.sort(key=lambda x: x['stats']['score_avg'])
-        notify_items(notify_forced, "FORCED")
-    else:
-        if notify_wakeup:
-            notify_wakeup.sort(key=lambda x: x['stats']['score_avg'])
-            notify_items(notify_wakeup, "WAKE_UP")
+            if FORCE_RELIST:
+                notify_forced.append(item)
+            else:
+                # Check if it was previously a ghost
+                if item_id in state["ghosts"]:
+                    notify_wakeup.append(item)
+                # Check if it's completely new
+                elif item_id not in state["all_seen"]:
+                    if item.get('source') == 'master_list':
+                        notify_hidden.append(item)
+                    else:
+                        notify_new.append(item)
         
-        if notify_new:
-            notify_new.sort(key=lambda x: x['stats']['score_avg'])
-            notify_items(notify_new, "NEW")
-
-    # 8. Save New State
-    state["all_seen"] = next_all_seen
-    state["active"] = next_active
-    state["ghosts"] = next_ghosts
-    
-    print(f"📊 State Update: {len(next_active)} Active | {len(next_ghosts)} Ghosts | {len(next_all_seen)} Total")
-    
-    if not FORCE_RELIST and (time.time() - state.get("last_heartbeat", 0)) > HEARTBEAT_INTERVAL:
-        send_discord_embed("✅ V7 State", f"Active: {len(next_active)}\nGhosts: {len(next_ghosts)}", 3447003)
-        state["last_heartbeat"] = time.time()
+        # Send notifications
+        if FORCE_RELIST and notify_forced:
+            log_message(f"📢 Force listing {len(notify_forced)} available residences")
+            notify_items(notify_forced, "FORCED")
+        else:
+            if notify_new:
+                log_message(f"📢 New drops: {len(notify_new)}")
+                notify_items(notify_new, "NEW")
+            
+            if notify_wakeup:
+                log_message(f"📢 Ghosts woke up: {len(notify_wakeup)}")
+                notify_items(notify_wakeup, "WAKE_UP")
+            
+            if notify_hidden:
+                log_message(f"🎯 Hidden gems found: {len(notify_hidden)}")
+                notify_items(notify_hidden, "HIDDEN_GEM")
+                # Update hidden finds counter
+                state["hidden_finds"].extend([item['id'] for item in notify_hidden])
+                state["stats"]["hidden_gems_found"] += len(notify_hidden)
         
-    save_data(state)
+        # Update state
+        new_all_seen = []
+        new_active = []
+        new_ghosts = []
+        
+        for item in audit_results:
+            item_id = item['id']
+            new_all_seen.append(item_id)
+            
+            if item['bookable']:
+                new_active.append(item_id)
+            else:
+                new_ghosts.append(item_id)
+        
+        # Remove duplicates from hidden_finds
+        state["hidden_finds"] = list(set(state["hidden_finds"]))
+        
+        state["all_seen"] = new_all_seen
+        state["active"] = new_active
+        state["ghosts"] = new_ghosts
+        state["stats"]["total_runs"] = state["stats"].get("total_runs", 0) + 1
+        state["stats"]["last_run"] = datetime.now().isoformat()
+        
+        log_message(f"📊 State updated:")
+        log_message(f"   • Active: {len(new_active)}")
+        log_message(f"   • Ghosts: {len(new_ghosts)}")
+        log_message(f"   • Hidden gems total: {state['stats']['hidden_gems_found']}")
+        
+        # Save state
+        save_data(state)
+        
+        # Heartbeat (once per day)
+        current_time = time.time()
+        if not FORCE_RELIST and (current_time - state.get("last_heartbeat", 0)) > HEARTBEAT_INTERVAL:
+            summary = f"Active: {len(new_active)} | Ghosts: {len(new_ghosts)} | Hidden gems: {state['stats']['hidden_gems_found']}"
+            send_discord_alert("✅ V8 State Summary", summary, COLORS["FORCED"])
+            state["last_heartbeat"] = current_time
+            save_data(state)
+        
+        log_message("✅ Check completed successfully")
+        
+    except Exception as e:
+        log_message(f"❌ CRITICAL ERROR: {type(e).__name__} - {str(e)}")
+        if DISCORD_WEBHOOK_URL:
+            send_discord_alert("❌ BOT ERROR", 
+                               f"Error during check: {type(e).__name__}", 
+                               COLORS["ERROR"])
 
 if __name__ == "__main__":
     check_crous()

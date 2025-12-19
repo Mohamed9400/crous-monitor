@@ -1,0 +1,2088 @@
+[
+  {
+    "id": 397,
+    "title": "Résidence de Torcy",
+    "address": "20/24 Promenade du Belvèdère 77200 Torcy",
+    "lat": 48.840656,
+    "lon": 2.653409,
+    "price": 463.0,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 1125,
+      "medias": [
+        {
+          "src": "1125/5a9980e4b7fd7-25m.JPG",
+          "description": null
+        }
+      ],
+      "area": {
+        "min": 25.14,
+        "max": 28.04
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 95,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 46300,
+            "max": 46300
+          }
+        }
+      ],
+      "label": "T1 25m2",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0912861-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Evier + plaque"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        }
+      ],
+      "residence": {
+        "id": "459df9cd-0d87-11e8-89ed-005056940822",
+        "label": "DR DUCOUX",
+        "address": "3 Rue Ducoux 41000 BLOIS",
+        "code": 4,
+        "medias": [
+          {
+            "src": "459df9cd-0d87-11e8-89ed-005056940822/5a854d9186cf7-Façade.JPG",
+            "description": null
+          },
+          {
+            "src": "459df9cd-0d87-11e8-89ed-005056940822/5a854d9201ce7-Intérieur.JPG",
+            "description": null
+          },
+          {
+            "src": "459df9cd-0d87-11e8-89ed-005056940822/5a854d92718a7-Laverie.JPG",
+            "description": null
+          }
+        ],
+        "description": "<p>R&eacute;sidence &eacute;ligible &agrave; l&#39;APL situ&eacute;e dans le quartier de la gare, site de la chocolaterie. Proche IUT, INSA, lyc&eacute;e Camille Claudel, lyc&eacute;e des arts et m&eacute;tiers et tous sites d&#39;enseignement sup&eacute;rieur. Arr&ecirc;t navette gratuite centre-ville et station tous bus. R&eacute;sidence &eacute;quip&eacute;e : local v&eacute;lo non ferm&eacute;, acc&egrave;s TV/TNT, acc&egrave;s internet en Wifi inclus, ascenseur, laverie, agent de s&eacute;curit&eacute; et de veille la nuit. Commerces &agrave; proximit&eacute;. Contact: 02.54.78.61.38 - blois@crous-orleans-tours.fr</p>",
+        "location": {
+          "lat": 47.585,
+          "lon": 1.325
+        },
+        "transports": [
+          {
+            "label": "Train",
+            "description": "",
+            "distance": 600,
+            "unitOfMeasure": "metre"
+          },
+          {
+            "label": "Bus",
+            "description": "Bus : terminus toutes lignes, toutes destinations arrêt gare. Navette gratuite centre-ville.",
+            "distance": 600,
+            "unitOfMeasure": "metre"
+          },
+          {
+            "label": "Stationnement urbain payant",
+            "description": "Parking fermé non surveillé situé sous la résidence du Dr Desfray, et en surface dans l’enceinte de cette résidence, dans la limite des places disponibles et pour un montant mensuel de 12 €.",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "0411070R",
+        "sector": {
+          "id": "87b6c875-0757-11e8-89ed-005056940822",
+          "label": "BLOIS"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": "<p>Logement &eacute;quip&eacute; d&#39;un lit, d&rsquo;un placard et d&#39;une table avec chaise. Kitchenette &eacute;quip&eacute;e d&rsquo;un meuble sous &eacute;vier, d&rsquo;un frigo et de plaques. Lavabo, douche et WC individuels. Le loyer ne comprend pas les charges d&#39;&eacute;lectricit&eacute; (dont chauffage).</p>",
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 400,
+    "title": "Résidence du Pré-St-Gervais",
+    "address": "13/25 rue de Stalingrad 93310 Le Pré Saint Gervais",
+    "lat": 48.887535,
+    "lon": 2.40092,
+    "price": 354.5,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 1298,
+      "medias": [
+        {
+          "src": "1298/5cdeba9f5c7ed-pdj t1.jpg",
+          "description": null
+        }
+      ],
+      "area": {
+        "min": 18.0,
+        "max": 18.0
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 91,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 35450,
+            "max": 35450
+          }
+        }
+      ],
+      "label": "T1",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0912861-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Evier + plaque"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        }
+      ],
+      "residence": {
+        "id": "69039725-7875-11e9-a02d-005056941f86",
+        "label": "Résidence Portes du Jura",
+        "address": "23, rue Maurice RAVEL - 25200 MONTBELIARD",
+        "code": 25,
+        "medias": [
+          {
+            "src": "69039725-7875-11e9-a02d-005056941f86/5cde7d4b72492-res pdj.jpg",
+            "description": null
+          }
+        ],
+        "description": "<p>Localisation : A 5 minutes &agrave; pied du resto&#39;U des Portes du Jura et du P&ocirc;le universitaire. Adresse : 23 rue Maurice Ravel 25200 Montb&eacute;liard T&eacute;l&eacute;phone : 03 81 94 45 92 Email : pole-hebergement-NFC@crous-bfc.fr Point resto Laverie Acc&egrave;s Internet</p>",
+        "location": {
+          "lat": 47.494,
+          "lon": 6.801
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "Moyens d'accès :<br />\r\nBus : Diam A - Diam B - 1 - 4 (Arrêt : Campus)",
+            "distance": 5,
+            "unitOfMeasure": "on_foot"
+          },
+          {
+            "label": "Stationnement urbain payant",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "0251961W",
+        "sector": {
+          "id": "1be96d42-76de-11e9-a02d-005056941f86",
+          "label": "Montbéliard"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": "<p>Appartement meubl&eacute; (lit bureau placards) - acc&egrave;s internet- Tarif mensuel toutes charges comprises sauf location compteur &eacute;lectrique et consommation- Possibilit&eacute; d&rsquo;aides CAF (APL) Pr&eacute;avis d&rsquo;un mois &agrave; donner avant d&eacute;part et &eacute;tat des lieux obligatoires avant d&eacute;part Prestations suppl&eacute;mentaires : location de draps (au mois),</p>",
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 406,
+    "title": "Résidence IRD Bondy",
+    "address": "17 rue Lucien Chapelain 93140 Bondy",
+    "lat": 48.9132,
+    "lon": 2.48669,
+    "price": 379.65,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 1132,
+      "medias": [],
+      "area": {
+        "min": 30.0,
+        "max": 30.0
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 434,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 37965,
+            "max": 37965
+          }
+        }
+      ],
+      "label": "T1 Bis",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0912861-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Evier + plaque"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        }
+      ],
+      "residence": {
+        "id": "6515edc3-004c-11e8-89ed-005056940822",
+        "label": "RESIDENCE MAR I SOL",
+        "address": "18 AV. ALFRED SAUVY 66100 PERPIGNAN",
+        "code": 22,
+        "medias": [
+          {
+            "src": "6515edc3-004c-11e8-89ed-005056940822/5a676418aec6f-_DSC6732.jpg",
+            "description": null
+          },
+          {
+            "src": "6515edc3-004c-11e8-89ed-005056940822/5a676419669cc-_DSC6696.jpg",
+            "description": null
+          }
+        ],
+        "description": "<p style=\"margin-left:0cm; margin-right:0cm\">&nbsp;</p>\r\n\r\n<p style=\"margin-left:0cm; margin-right:0cm\">R&eacute;sidence sur le campus de l&rsquo;Universit&eacute;.</p>\r\n\r\n<p style=\"margin-left:0cm; margin-right:0cm\">A proximit&eacute; imm&eacute;diate de l&rsquo;IUT, de l&rsquo;UPVD, proche du Lyc&eacute;e jean Lur&ccedil;at, de l&rsquo;IRTS et N&eacute;o sup, la r&eacute;sidence Mar I Sol se trouve &agrave; la jonction d&rsquo;une riche zone commerciale et du quartier sud &laquo; le Moulin &agrave; Vent &raquo;. Elle est desservie par les lignes de bus 8 et 11. Vous aurez acc&egrave;s au centre-ville (FNAC, salle de concert, th&eacute;&acirc;tre, boutiques), au p&ocirc;le multiplex cin&eacute;ma &laquo; Le CASTILLET &raquo;, &agrave; la gare SCNF en 15 mn par les transports en commun ainsi qu&rsquo;&agrave; un parc des sports et espace aquatique &agrave; 5 mn &agrave; pied. Le bus &agrave; 1&euro; vous permettra aussi de vous rendre cot&eacute; montagne (Font-Romeu, Les Angles) ou c&ocirc;t&eacute; mer (Canet, Argeles sur mer). De plus, une navette dessert le campus MAILLY tous les jours avec un d&eacute;part toutes les 30mn ( www.sankeo.fr), un r&eacute;seau de piste cyclable et un service municipal de v&eacute;lo &agrave; la location sont &agrave; votre disposition &agrave; proximit&eacute; imm&eacute;diate de la Cit&eacute; U Implant&eacute;e dans un parc de 3 hectares et &frac12; arbor&eacute; une partie des logements disposent d&rsquo;une vue sur la chaine des Pyr&eacute;n&eacute;es (les Alb&egrave;res, le Canigou) et Nord avec vue sur le centre historique et les collines des Corbi&egrave;res, parc enti&egrave;rement clos, s&eacute;curis&eacute; par contr&ocirc;le d&rsquo;acc&egrave;s et r&eacute;serv&eacute; aux d&eacute;placements &agrave; pied. Le campus universitaire (IUT et UPVD) est facilement accessible par un chemin pi&eacute;tonnier &eacute;clair&eacute; longeant les terres agricoles de l&rsquo;IUT. Vous trouverez au c&oelig;ur du parc une loge d&rsquo;accueil ouverte 24h/24h et 7j/7j, avec un service de veille assur&eacute; la nuit, une laverie automatique, une salle polyvalente, de salles de travail, un garage &agrave; v&eacute;lo collectif, des box automobiles individuels. Un espace de sport a &eacute;t&eacute; cr&eacute;&eacute; comprenant un espace de fitness en ext&eacute;rieur, un city stade multi sport, un boulodrome. Des stationnements payants (5&euro;) en zone r&eacute;serv&eacute;e &agrave; cet usage sont pr&eacute;vus &agrave; l&rsquo;int&eacute;rieur du parc.</p>",
+        "location": {
+          "lat": 42.68,
+          "lon": 2.903
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "Bus 8 : arrêt cité universitaire / Bus 11 : arrêt IUT",
+            "distance": 2,
+            "unitOfMeasure": "on_foot"
+          }
+        ],
+        "uairne": "0660813A",
+        "sector": {
+          "id": "491488ab-116b-11e8-89ed-005056940822",
+          "label": "Perpignan"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": "<p>R&eacute;sidence pr&eacute;sentant des logements de type T1bis (30m&sup2;) et T2 (40 m&sup2;) avec balcon sauf appartements au rez de chauss&eacute;e, WIFI Pi&egrave;ce principale meubl&eacute;e : lit en 90 cm, chevet, table de cuisine, 2 chaises, bureau, armoire, placard penderie Coin cuisine &eacute;quip&eacute; : dot&eacute;e de 2 plaques &eacute;lectriques, r&eacute;frig&eacute;rateur, placard de rangement Salle d&rsquo;eau avec douche, lavabo, miroir, WC.</p>\r\n\r\n<p><strong>Charges en plus du loyer</strong> : Eau chaude, eau froide et &eacute;lectricit&eacute;. Les consommations sont factur&eacute;es sur relev&eacute; de compteurs par la r&eacute;sidence.</p>\r\n\r\n<p>Ce logement peut ouvrir droit &agrave; des prestations de la Caisse d&#39;Allocation Familiale. Pour plus de renseignements, se rendre sur : https://www.caf.fr/.</p>\r\n\r\n<p><em><strong>Les montants sont donn&eacute;s &agrave; titre indicatif</strong></em><em><strong>. Ils sont susceptibles d&rsquo;&eacute;voluer sur d&eacute;cision du conseil d&rsquo;administration du Crous.</strong></em></p>",
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1124,
+    "title": "Résidence Daviel",
+    "address": "29 rue Daviel 75013 Paris",
+    "lat": 48.82787,
+    "lon": 2.34395,
+    "price": 316.01,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 1137,
+      "medias": [
+        {
+          "src": "1137/5b053219973d7-Beauvais_res_Parckennedy_T1_cuisine.jpg",
+          "description": null
+        },
+        {
+          "src": "1137/5b053219efe62-Beauvais_res_ParcKennedy_T1_etagr.jpg",
+          "description": null
+        },
+        {
+          "src": "1137/5b05321a44c2a-Beauvais_res_ParcKennedy_T1_SDB.jpg",
+          "description": null
+        },
+        {
+          "src": "1137/5b05321b7dbb1-Beauvais_res_ParcKennedy_T1chbre.jpg",
+          "description": null
+        },
+        {
+          "src": "1137/5b053235870c6-Beauvais_res_ParcKennedy_T1_etagr.jpg",
+          "description": null
+        },
+        {
+          "src": "1137/5b053235c9744-Beauvais_res_ParcKennedy_T1_interphotne.jpg",
+          "description": null
+        }
+      ],
+      "area": {
+        "min": 19.0,
+        "max": 19.0
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 24,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 31601,
+            "max": 31601
+          }
+        }
+      ],
+      "label": "STUDIO",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0912861-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Evier + plaque"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        }
+      ],
+      "residence": {
+        "id": "273ca685-011b-11e8-89ed-005056940822",
+        "label": "RESIDENCE PARC KENNEDY",
+        "address": "42 RUE MATHEAS 60000 BEAUVAIS",
+        "code": 4,
+        "medias": [
+          {
+            "src": "273ca685-011b-11e8-89ed-005056940822/5b0531e260736-Beauvais_res_ParcKennedy_ext.jpg",
+            "description": null
+          },
+          {
+            "src": "273ca685-011b-11e8-89ed-005056940822/5b0532dd2a1af-Beauvais_res_ParcKennedy_Parking.jpg",
+            "description": null
+          },
+          {
+            "src": "273ca685-011b-11e8-89ed-005056940822/5b0532f168210-Beauvais_res_ParcKennedy_BAL.jpg",
+            "description": null
+          },
+          {
+            "src": "273ca685-011b-11e8-89ed-005056940822/5b0533020a1de-Beauvais_res_ParcKennedy_laverie.jpg",
+            "description": null
+          }
+        ],
+        "description": "<p>La r&eacute;sidence Kennedy se situe &agrave; proximit&eacute; du centre ville de Beauvais et de la gare. Charges d&#39;eau et de WIFI comprises. Charges d&#39;&eacute;lectricit&eacute; en plus.</p>",
+        "location": {
+          "lat": 49.43,
+          "lon": 2.09
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "",
+            "distance": 10,
+            "unitOfMeasure": "on_foot"
+          },
+          {
+            "label": "Stationnement urbain gratuit",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "0601976X",
+        "sector": {
+          "id": "3243ae5b-fac2-11e7-89ed-005056940822",
+          "label": "Beauvais"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": "<p>Studios d&#39;environs 19 m2, &eacute;quip&eacute;s d&#39;une kitchenette et d&#39;une salle de bain individuelle.</p>\r\n\r\n<p style=\"margin-left:0cm; margin-right:0cm\">Le montant de la r&eacute;servation correspond &agrave; une avance sur loyer de 100&euro;.</p>\r\n\r\n<p style=\"margin-left:0cm; margin-right:0cm\">Le montant du loyer que vous aurez &agrave; payer est calcul&eacute; en fonction de la surface du logement qui vous est attribu&eacute;.</p>\r\n\r\n<p style=\"margin-left:0cm; margin-right:0cm\">Vous aurez &agrave; r&eacute;gler &agrave; la remise des cl&eacute;s le montant du d&eacute;pot de garantie (correspondant &agrave; un mois de loyer) et la diff&eacute;rence entre le montant du loyer et l&#39;avance.</p>",
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1144,
+    "title": "Résidence Convention",
+    "address": "161 bis rue de la Convention  75015 Paris",
+    "lat": 48.83863,
+    "lon": 2.29331,
+    "price": 277.0,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 1158,
+      "medias": [
+        {
+          "src": "1158/5cdeb289235e9-duvillard chambre confort.jpg",
+          "description": null
+        }
+      ],
+      "area": {
+        "min": 9.0,
+        "max": 9.0
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 97,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 27700,
+            "max": 27700
+          }
+        }
+      ],
+      "label": "Chambre confort",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        }
+      ],
+      "residence": {
+        "id": "67cf537e-7875-11e9-a02d-005056941f86",
+        "label": "Residence Duvillard",
+        "address": "2 rue Ernest Duvillard - BP 80523 - 90016 BELFORT CEDEX",
+        "code": 14,
+        "medias": [
+          {
+            "src": "67cf537e-7875-11e9-a02d-005056941f86/5cde7b8077041-DUVILLARD.jpg",
+            "description": null
+          }
+        ],
+        "description": "<p>Localisation : La R&eacute;sidence Duvillard se trouve &agrave; proximit&eacute; de l&#39;IUT. La gestion de cette r&eacute;sidence est assur&eacute;e par le Secr&eacute;tariat de la R&eacute;sidence Duvillard. Adresse : Rue Ernest Duvillard 90016 Belfort T&eacute;l&eacute;phone : 03 84 21 06 01 Email : pole-hebergement-NFC@crous-bfc.fr Espace de convivialit&eacute; Point resto Biblioth&egrave;que Am&eacute;nagements pour handicap&eacute;s Laverie</p>",
+        "location": {
+          "lat": 47.644,
+          "lon": 6.837
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "Bus : 3",
+            "distance": 2,
+            "unitOfMeasure": "on_foot"
+          },
+          {
+            "label": "Stationnement urbain gratuit",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "0900346M",
+        "sector": {
+          "id": "b40e9291-76dd-11e9-a02d-005056941f86",
+          "label": "Belfort"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": null,
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1150,
+    "title": "Résidence Philippe de Girard 2",
+    "address": "74 rue Philippe de Girard 75018 Paris",
+    "lat": 48.88819,
+    "lon": 2.3603,
+    "price": 302.0,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 1167,
+      "medias": [],
+      "area": {
+        "min": 22.0,
+        "max": 22.0
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 45,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 30200,
+            "max": 30200
+          }
+        }
+      ],
+      "label": "T1 BEAUBLANC",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0912861-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Evier + plaque"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        },
+        {
+          "id": "d091b03f-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Balcon"
+        }
+      ],
+      "residence": {
+        "id": "3e7b1d0d-0821-11e8-89ed-005056940822",
+        "label": "Résidence de Beaublanc",
+        "address": "18 boulevard de la Borie 87100 LIMOGES",
+        "code": 10,
+        "medias": [
+          {
+            "src": "3e7b1d0d-0821-11e8-89ed-005056940822/5a86e6cd7b100-Beaublanc exterieur 2.jpg",
+            "description": null
+          }
+        ],
+        "description": "<p>R&eacute;sidence enti&egrave;rement r&eacute;nov&eacute;e en 2025, calme situ&eacute;e &agrave; proximit&eacute; du parc des sports de Beaublanc, dans le quartier de la facult&eacute; des Sciences et Techniques, et de l&#39;IUT proposant 8 T1 et 57 T1 de 32m&sup2;</p>\r\n\r\n<p>Espaces communs, laverie, veilleur de nuit, acc&egrave;s Internet, parking gratuit</p>\r\n\r\n<p>Chauffage collectif / Electricit&eacute; en suppl&eacute;ment &agrave; la charge du locataire (Ouverture de compteur)</p>",
+        "location": {
+          "lat": 45.843,
+          "lon": 1.239
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "Lignes 14 et 8",
+            "distance": null,
+            "unitOfMeasure": null
+          },
+          {
+            "label": "Vélo",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "0871057B",
+        "sector": {
+          "id": "514ff66b-fad1-11e7-89ed-005056940822",
+          "label": "Limoges"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": "<p>Studio avec balcon &eacute;quip&eacute; pour une personne : lit 90x200, chevet, bureau, chaises, placard de rangement Salle de bains : lavabo, douche, toilettes, armoire de toilettes Cuisine : cuisini&egrave;re &eacute;lectrique, r&eacute;frig&eacute;rateur, &eacute;vier sur placard Parking Acc&egrave;s Internet dans tous les appartements</p>",
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1152,
+    "title": "Résidence Romy Schneider",
+    "address": "5/7 rue Romy Schneider 75018 Paris",
+    "lat": 48.8881,
+    "lon": 2.36138,
+    "price": 467.0,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 1164,
+      "medias": [
+        {
+          "src": "1164/5a8580b81883a-carrelet STUDIO.JPEG",
+          "description": null
+        }
+      ],
+      "area": {
+        "min": 21.16,
+        "max": 21.25
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 8,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 46700,
+            "max": 46700
+          }
+        }
+      ],
+      "label": "T1 (balcon)",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0912861-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Evier + plaque"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        },
+        {
+          "id": "d091b03f-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Balcon"
+        }
+      ],
+      "residence": {
+        "id": "3cf9a3bb-0823-11e8-89ed-005056940822",
+        "label": "RESIDENCE LE CARRELET",
+        "address": "160 Rue de Coureilles - 17000 LA ROCHELLE",
+        "code": 18,
+        "medias": [
+          {
+            "src": "3cf9a3bb-0823-11e8-89ed-005056940822/5a7d6d83d561f-CARRELET 2.JPEG",
+            "description": null
+          },
+          {
+            "src": "3cf9a3bb-0823-11e8-89ed-005056940822/5a7d6d85b17f0-carrelet STUDIO.JPEG",
+            "description": null
+          }
+        ],
+        "description": "<p>&Agrave; proximit&eacute; de l&#39;UFR Droit et Gestion et de l&#39;IUT, du groupe SUP de CO, de l&#39;EIGSI, du restaurant universitaire R&eacute;publique, de la brasserie Antin&eacute;a et du SO&#39;WHAT.<br />\r\nService Libre service Velo YELO - Parking de l&#39;IUT Accessibilit&eacute; PMR Autopartage YELO - location de voitures &eacute;lectriques - &agrave; 150 m environ.</p>\r\n\r\n<p><a href=\"http://www.stockcrous.fr/visites/Le%20Carrelet/residence_le_carrelet_larochelle.html\" target=\"_blank\">Visite virtuelle</a></p>\r\n\r\n<p><em><strong>Les montants sont donn&eacute;s &agrave; titre indicatif</strong></em><em><strong>. Ils sont susceptibles d&rsquo;&eacute;voluer sur d&eacute;cision du conseil d&rsquo;administration du Crous.</strong></em></p>",
+        "location": {
+          "lat": 46.14,
+          "lon": -1.151
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "illico 3 ou 4 - Arrêt La Sole<br />\r\npour récupération des clés à la Cité Antinéa",
+            "distance": 150,
+            "unitOfMeasure": "metre"
+          },
+          {
+            "label": "Bus",
+            "description": "Illico 3 - arrêt Maison de la Charente  Maritime",
+            "distance": 100,
+            "unitOfMeasure": "metre"
+          },
+          {
+            "label": "Stationnement urbain gratuit",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "017004DF",
+        "sector": {
+          "id": "517abd45-07f1-11e8-89ed-005056940822",
+          "label": "LA ROCHELLE"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": "<p><strong>T1 avec balcon </strong>de 18 m&sup2; meubl&eacute; (lit d&rsquo;une personne, un bureau, une chaise, une armoire) et &eacute;quip&eacute; de kitchenette (&eacute;vier, plaque et frigo) et d&#39;une salle d&#39;eau (douche, wc et lavabo)<br />\r\nNon &eacute;quip&eacute; en vaisselle et en linge de lit.<br />\r\nVente de kit literie jetable (draps, couette, oreiller jetable) &agrave; la cit&eacute; Antin&eacute;a.<br />\r\nInternet filaire (pr&eacute;voir c&acirc;ble RJ 45 droit).</p>\r\n\r\n<p>&nbsp;</p>",
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1154,
+    "title": "Résidence Championnet 1",
+    "address": "204 rue Championnet 75018 Paris",
+    "lat": 48.89394,
+    "lon": 2.33059,
+    "price": 348.0,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 1165,
+      "medias": [
+        {
+          "src": "1165/5c794ed928d0d-Cité_U_luminy_bâtD_01.jpg",
+          "description": null
+        },
+        {
+          "src": "1165/5c794ed9c8ee0-Cité_U_luminy_bâtD_05.jpg",
+          "description": null
+        },
+        {
+          "src": "1165/5c794fb158ac3-Cité_U_luminy_bâtD_08.jpg",
+          "description": null
+        }
+      ],
+      "area": {
+        "min": 14.0,
+        "max": 14.0
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 552,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 34800,
+            "max": 34800
+          }
+        }
+      ],
+      "label": "CHAMBRE CONFORT D",
+      "reference": "2",
+      "studyLevel": {
+        "min": 3,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        },
+        {
+          "id": "d0916c95-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Micro-onde"
+        }
+      ],
+      "residence": {
+        "id": "e02face4-fa03-11e7-89ed-005056940822",
+        "label": "CITE LUMINY",
+        "address": "171 avenue de Luminy - 13288 Marseille cedex 9",
+        "code": 120,
+        "medias": [
+          {
+            "src": "e02face4-fa03-11e7-89ed-005056940822/5a83f09be3152-batimentE-luminy-centrale.jpg",
+            "description": null
+          }
+        ],
+        "description": "<p>10 b&acirc;timents Situ&eacute;e sur le campus de Luminy - restaurant et caf&eacute;t&eacute;ria universitaires de Luminy &agrave; proximit&eacute;. des calanques.<br />\r\nFacult&eacute;s des sciences - &Eacute;cole Nationale Sup&eacute;rieure d&#39;Architecture - &Eacute;cole Sup&eacute;rieure des Beaux Arts - STAPS - Euromed<br />\r\nAcc&egrave;s : Bus : 21, 24, Jetbus</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>",
+        "location": {
+          "lat": 43.231,
+          "lon": 5.44
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "Ligne 21 & 24 ou Jetbus 921 à 3mn",
+            "distance": 300,
+            "unitOfMeasure": "metre"
+          },
+          {
+            "label": "Stationnement urbain gratuit",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "0133552R",
+        "sector": {
+          "id": "b4a95b1e-1197-11e8-89ed-005056940822",
+          "label": "Marseille Luminy"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": "<p>studettes de 14 m&sup2;, meubl&eacute;es et &eacute;quip&eacute;es d&#39;une douche, WC, lavabo, cuisines collectives.</p>\r\n\r\n<p><strong>Les studettes sont attribu&eacute;es exclusivement aux &eacute;tudiants inscrits au niveau L3 dans la limite des places disponibles.</strong></p>\r\n\r\n<p>Attention, une v&eacute;rification de votre niveau d&#39;&eacute;tudes sera effectu&eacute;e avant votre entr&eacute;e dans les lieux, une pr&eacute;sentation de votre certificat de scolarit&eacute; ou une preuve d&#39;inscription pour l&#39;ann&eacute;e universitaire &agrave; venir sera exig&eacute;e.<br />\r\nSi vous n&#39;avez pas le niveau d&#39;&eacute;tudes requis vous n&#39;aurez pas acc&egrave;s &agrave; ce logement.</p>\r\n\r\n<p><em>Pour une demande d&#39;h&eacute;bergement, dans le cadre d&#39;une situation de handicap (moteur, sensoriel, maladies invalidantes) : Merci de faire votre demande uniquement par le biais du formulaire : <a href=\"https://demande-logement-specifique.crous-aix-marseille.fr/\" target=\"_blank\">fiche handicap</a></em></p>",
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1158,
+    "title": "Résidence Myrha 1",
+    "address": "61 rue Myrha 75018 Paris",
+    "lat": 48.88666,
+    "lon": 2.3513,
+    "price": 456.46,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 387,
+      "medias": [
+        {
+          "src": "387/5a8466463a464-CrousLorraine_RésidencePlacieux_PMR 24m².jpg",
+          "description": null
+        }
+      ],
+      "area": {
+        "min": 18.0,
+        "max": 18.0
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 92,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 45646,
+            "max": 45646
+          }
+        }
+      ],
+      "label": "Studio",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0912861-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Evier + plaque"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        }
+      ],
+      "residence": {
+        "id": "277bccc5-0b78-11e8-89ed-005056940822",
+        "label": "CU PLACIEUX",
+        "address": "39 Boulevard du Maréchal Lyautey 54600 VILLERS LES NANCY",
+        "code": 10,
+        "medias": [
+          {
+            "src": "277bccc5-0b78-11e8-89ed-005056940822/647d9a95acb6f-Placieux1.jpg",
+            "description": null
+          },
+          {
+            "src": "277bccc5-0b78-11e8-89ed-005056940822/647d9a95ba4ad-Placieux2.jpg",
+            "description": null
+          }
+        ],
+        "description": "<p>D&eacute;couvrez la r&eacute;sidence universitaire Placieux : avec ses 412 logements, notre r&eacute;sidence b&eacute;n&eacute;ficie d&#39;un emplacement privil&eacute;gi&eacute; &agrave; proximit&eacute; du campus Sciences, du campus Artem (avec l&rsquo;(S)pace Artem et la Maison de l&rsquo;&eacute;tudiant Artem), de l&rsquo;IUT Montet, du lyc&eacute;e h&ocirc;telier Stanislas, de T&eacute;l&eacute;com Nancy, du campus Staps et du Resto U&rsquo; V&eacute;lodrome.</p>\r\n\r\n<p>En choisissant la r&eacute;sidence Placieux, vous serez &agrave; quelques pas seulement des lieux de vie &eacute;tudiante. Nos logements modernes vous offrent le confort dont vous avez besoin pour vous concentrer sur vos &eacute;tudes et vous d&eacute;tendre. Vous pourrez &eacute;galement profiter des espaces communs conviviaux et rencontrer ainsi d&#39;autres &eacute;tudiants dans un environnement propice &agrave; l&#39;&eacute;change. Ne manquez pas cette occasion de vivre une exp&eacute;rience &eacute;tudiante dans un cadre pratique et dynamique.</p>\r\n\r\n<p><strong>Services :</strong><br />\r\nAccessible PMR / Ascenseur / Cuisine collective / Distribution protections p&eacute;riodiques / Douche individuelle / Laverie / Parking / Parking PMR / Salle de d&eacute;tente / Salle de travail / Surveillance et s&eacute;curit&eacute;</p>\r\n\r\n<p><strong>Parking &agrave; ciel ouvert :</strong><br />\r\n5 &euro; par mois selon les possibilit&eacute;s de mise en &oelig;uvre de la r&eacute;sidence.</p>",
+        "location": {
+          "lat": 48.673,
+          "lon": 6.157
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "",
+            "distance": 3,
+            "unitOfMeasure": "on_foot"
+          },
+          {
+            "label": "Stationnement urbain gratuit",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "0542042B",
+        "sector": {
+          "id": "22b88d60-01d0-11e8-89ed-005056940822",
+          "label": "Nancy - Sciences et Technologies / Artem"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": null,
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1164,
+    "title": "Résidence Poulet",
+    "address": "9 rue Poulet 75018 Paris",
+    "lat": 48.88701,
+    "lon": 2.34833,
+    "price": 392.23,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 1171,
+      "medias": [
+        {
+          "src": "1171/5a8d46f573745-P7 4.jpg",
+          "description": null
+        },
+        {
+          "src": "1171/5a8d46f5a0613-P7 2.jpg",
+          "description": null
+        },
+        {
+          "src": "1171/5a8d46f5b7fc2-P7 3.jpg",
+          "description": null
+        }
+      ],
+      "area": {
+        "min": 17.5,
+        "max": 17.5
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 34,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 39223,
+            "max": 39223
+          }
+        }
+      ],
+      "label": "Studio P7",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0912861-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Evier + plaque"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        }
+      ],
+      "residence": {
+        "id": "29386dc2-0b78-11e8-89ed-005056940822",
+        "label": "CU SAULCY",
+        "address": "Ile du Saulcy CS 60587 57010 METZ CEDEX 1",
+        "code": 14,
+        "medias": [
+          {
+            "src": "29386dc2-0b78-11e8-89ed-005056940822/648030443e9da-Saulcy0.jpg",
+            "description": null
+          },
+          {
+            "src": "29386dc2-0b78-11e8-89ed-005056940822/647da621d528c-Saulcy1.jpg",
+            "description": null
+          },
+          {
+            "src": "29386dc2-0b78-11e8-89ed-005056940822/647da621df417-Saulcy2.jpg",
+            "description": null
+          },
+          {
+            "src": "29386dc2-0b78-11e8-89ed-005056940822/647da621e6488-Saulcy3.jpg",
+            "description": null
+          },
+          {
+            "src": "29386dc2-0b78-11e8-89ed-005056940822/647da621ebbe1-Saulcy4.jpg",
+            "description": null
+          },
+          {
+            "src": "29386dc2-0b78-11e8-89ed-005056940822/647da621f32bf-Saulcy5.jpg",
+            "description": null
+          },
+          {
+            "src": "29386dc2-0b78-11e8-89ed-005056940822/647da62204848-Saulcy6.jpg",
+            "description": null
+          },
+          {
+            "src": "29386dc2-0b78-11e8-89ed-005056940822/647dd22d0989b-Saulcy7.jpg",
+            "description": null
+          },
+          {
+            "src": "29386dc2-0b78-11e8-89ed-005056940822/647dd22d1b644-Saulcy8.jpg",
+            "description": null
+          }
+        ],
+        "description": "<p>La r&eacute;sidence universitaire Saulcy, situ&eacute;e en plein c&oelig;ur du campus Saulcy &agrave; Metz, offre un environnement id&eacute;al pour les &eacute;tudiants. Avec ses 804 logements r&eacute;partis dans sept b&acirc;timents (P1 &agrave; P7), notre r&eacute;sidence vous propose des h&eacute;bergements pratiques, accessibles, et dispose de plusieurs espaces pens&eacute;s pour le bien-&ecirc;tre des &eacute;tudiants. Vous aurez ainsi &agrave; votre disposition une salle de sport accessible gratuitement, vous offrant toute une gamme d&rsquo;appareils de cardio-training, ainsi qu&rsquo;une salle de coworking &eacute;quip&eacute;e d&rsquo;un grand &eacute;cran multim&eacute;dia et d&rsquo;espaces pens&eacute;s pour le travail collaboratif.&nbsp;&nbsp;</p>\r\n\r\n<p>Profitez de la proximit&eacute; imm&eacute;diate de l&#39;(S)pace Saulcy, o&ugrave; vous trouverez l&#39;&eacute;picerie Market&#39; Rimbaud pour vos courses, ainsi que la Station P0 anim&eacute;e par le service de la vie &eacute;tudiante, espace convivial pour vous d&eacute;tendre et travailler en coworking. De plus, vous pourrez vous rendre au Resto U&#39; Verlaine, &agrave; 5 min &agrave; pied de la r&eacute;sidence, pour vous restaurer.</p>\r\n\r\n<p>Ne manquez pas l&#39;opportunit&eacute; de vivre une exp&eacute;rience &eacute;tudiante agr&eacute;able dans un environnement dynamique et verdoyant &agrave; proximit&eacute; du centre-ville.<br />\r\nR&eacute;servez d&egrave;s maintenant votre logement et pr&eacute;parez-vous &agrave; profiter de votre vie &eacute;tudiante dans notre r&eacute;sidence universitaire. Nos &eacute;quipes seront ravies de vous accompagner tout au long de vos &eacute;tudes.</p>\r\n\r\n<p><strong>Services :</strong><br />\r\nAccessible PMR / Ascenseur / Cuisine collective / Distributeur de pizzas / Distribution protections p&eacute;riodiques / Douche individuelle / Garage &agrave; v&eacute;los / Internet et Wifi / Kitchenette individuelle / Laverie / Parking / Parking PMR / Restauration sur place / Salle de d&eacute;tente / Salle de sport / Salle de travail / Salle polyvalente / Surveillance et s&eacute;curit&eacute;</p>\r\n\r\n<p><strong>Parking &agrave; ciel ouvert :</strong><br />\r\n5 &euro; par mois selon les possibilit&eacute;s de mise en &oelig;uvre de la r&eacute;sidence.</p>",
+        "location": {
+          "lat": 49.121,
+          "lon": 6.158
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "",
+            "distance": 5,
+            "unitOfMeasure": "on_foot"
+          },
+          {
+            "label": "Parking privatif",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          },
+          {
+            "label": "Stationnement urbain gratuit",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "0572079A",
+        "sector": {
+          "id": "94ffba8b-01cf-11e8-89ed-005056940822",
+          "label": "Metz -  Saulcy"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": null,
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1169,
+    "title": "Résidence Ourcq",
+    "address": "12-14 rue de l'Ourcq 75019 Paris",
+    "lat": 48.8887,
+    "lon": 2.38445,
+    "price": 418.0,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 392,
+      "medias": [
+        {
+          "src": "392/5d8fceb5082c2-5a7a064a2e0d5-IMG_4180_1.jpg",
+          "description": null
+        },
+        {
+          "src": "392/5d8fceb54046d-5a7a065b50cc5-IMG_4181.jpg",
+          "description": null
+        },
+        {
+          "src": "392/5d8fcede809b5-5a7a065ba277b-IMG_4190.jpg",
+          "description": null
+        }
+      ],
+      "area": {
+        "min": 15.0,
+        "max": 17.0
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 56,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 41800,
+            "max": 47100
+          }
+        }
+      ],
+      "label": "Chambre simple de T1 15-17 m",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        }
+      ],
+      "residence": {
+        "id": "49fcc0ef-ff90-11e7-89ed-005056940822",
+        "label": "Hyacinthe BASTARAUD",
+        "address": "Route du stade Pierre Antonius Bergevin 97110 Pointe-à-Pitre",
+        "code": 2,
+        "medias": [
+          {
+            "src": "49fcc0ef-ff90-11e7-89ed-005056940822/5a7a05c953cc9-ext.jpg",
+            "description": null
+          },
+          {
+            "src": "49fcc0ef-ff90-11e7-89ed-005056940822/5a7a05d118575-IMG_4193.JPG",
+            "description": null
+          },
+          {
+            "src": "49fcc0ef-ff90-11e7-89ed-005056940822/5a7a05d52d9f6-IMG_4191.JPG",
+            "description": null
+          }
+        ],
+        "description": "<p>Localisation:</p>\r\n\r\n<p>En plein centre-ville de Pointe-&agrave;-Pitre.</p>\r\n\r\n<p>Acc&egrave;s : Campus desservi par des lignes de bus ou v&eacute;hicule particulier</p>\r\n\r\n<p>Types de logements:</p>\r\n\r\n<p>Des T1 de 13 &agrave; 27 m2 avec sanitaires individuels, cuisine collective.</p>",
+        "location": {
+          "lat": 16.252,
+          "lon": -61.543
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": "on_foot"
+          },
+          {
+            "label": "Stationnement urbain gratuit",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "9711243Z",
+        "sector": {
+          "id": "589389fa-0c1c-11e8-89ed-005056940822",
+          "label": "Pointe-à-Pitre - Bergevin"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": "<p>Chambre meubl&eacute;e , douche,Wc,</p>\r\n\r\n<p>Espace collectif : 1 cuisine commune par &eacute;tage, laverie,visiophone</p>\r\n\r\n<p>Aides disponibles :ALS</p>",
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1174,
+    "title": "Résidence Michel de Bourges",
+    "address": "8-10 rue Michel de Bourges  75020 Paris",
+    "lat": 48.85423,
+    "lon": 2.40057,
+    "price": 440.0,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 395,
+      "medias": [
+        {
+          "src": "395/5d8fcf077a262-5a7a064a2e0d5-IMG_4180_1.jpg",
+          "description": null
+        },
+        {
+          "src": "395/5d8fcf07a07f4-5a7a065b50cc5-IMG_4181.jpg",
+          "description": null
+        },
+        {
+          "src": "395/5d8fcf07b3148-5a7a065ba277b-IMG_4190.jpg",
+          "description": null
+        }
+      ],
+      "area": {
+        "min": 19.0,
+        "max": 21.0
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 55,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 44000,
+            "max": 47100
+          }
+        }
+      ],
+      "label": "Chambre simple de T1 19-21 m",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        },
+        {
+          "id": "d091b03f-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Balcon"
+        }
+      ],
+      "residence": {
+        "id": "49fcc0ef-ff90-11e7-89ed-005056940822",
+        "label": "Hyacinthe BASTARAUD",
+        "address": "Route du stade Pierre Antonius Bergevin 97110 Pointe-à-Pitre",
+        "code": 2,
+        "medias": [
+          {
+            "src": "49fcc0ef-ff90-11e7-89ed-005056940822/5a7a05c953cc9-ext.jpg",
+            "description": null
+          },
+          {
+            "src": "49fcc0ef-ff90-11e7-89ed-005056940822/5a7a05d118575-IMG_4193.JPG",
+            "description": null
+          },
+          {
+            "src": "49fcc0ef-ff90-11e7-89ed-005056940822/5a7a05d52d9f6-IMG_4191.JPG",
+            "description": null
+          }
+        ],
+        "description": "<p>Localisation:</p>\r\n\r\n<p>En plein centre-ville de Pointe-&agrave;-Pitre.</p>\r\n\r\n<p>Acc&egrave;s : Campus desservi par des lignes de bus ou v&eacute;hicule particulier</p>\r\n\r\n<p>Types de logements:</p>\r\n\r\n<p>Des T1 de 13 &agrave; 27 m2 avec sanitaires individuels, cuisine collective.</p>",
+        "location": {
+          "lat": 16.252,
+          "lon": -61.543
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": "on_foot"
+          },
+          {
+            "label": "Stationnement urbain gratuit",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "9711243Z",
+        "sector": {
+          "id": "589389fa-0c1c-11e8-89ed-005056940822",
+          "label": "Pointe-à-Pitre - Bergevin"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": "<p>Chambre meubl&eacute;e , douche,Wc,</p>\r\n\r\n<p>Espace collectif :1 cuisine commune par &eacute;tage, laverie,visiophone</p>\r\n\r\n<p>Aides disponibles : ALS</p>",
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1176,
+    "title": "Résidence Bisson",
+    "address": "21 rue Bisson 75020 Paris",
+    "lat": 48.87088,
+    "lon": 2.38048,
+    "price": 471.0,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 397,
+      "medias": [
+        {
+          "src": "397/5d8fcf4c9d518-5a7a064a2e0d5-IMG_4180_1.jpg",
+          "description": null
+        },
+        {
+          "src": "397/5d8fcf4cc4746-5a7a065b50cc5-IMG_4181.jpg",
+          "description": null
+        },
+        {
+          "src": "397/5d8fcf4cd7af2-5a7a065ba277b-IMG_4190.jpg",
+          "description": null
+        }
+      ],
+      "area": {
+        "min": 25.0,
+        "max": 27.0
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 54,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 47100,
+            "max": 49000
+          }
+        }
+      ],
+      "label": "Chambre simple de T1 25-27 m",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        },
+        {
+          "id": "d091b03f-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Balcon"
+        }
+      ],
+      "residence": {
+        "id": "49fcc0ef-ff90-11e7-89ed-005056940822",
+        "label": "Hyacinthe BASTARAUD",
+        "address": "Route du stade Pierre Antonius Bergevin 97110 Pointe-à-Pitre",
+        "code": 2,
+        "medias": [
+          {
+            "src": "49fcc0ef-ff90-11e7-89ed-005056940822/5a7a05c953cc9-ext.jpg",
+            "description": null
+          },
+          {
+            "src": "49fcc0ef-ff90-11e7-89ed-005056940822/5a7a05d118575-IMG_4193.JPG",
+            "description": null
+          },
+          {
+            "src": "49fcc0ef-ff90-11e7-89ed-005056940822/5a7a05d52d9f6-IMG_4191.JPG",
+            "description": null
+          }
+        ],
+        "description": "<p>Localisation:</p>\r\n\r\n<p>En plein centre-ville de Pointe-&agrave;-Pitre.</p>\r\n\r\n<p>Acc&egrave;s : Campus desservi par des lignes de bus ou v&eacute;hicule particulier</p>\r\n\r\n<p>Types de logements:</p>\r\n\r\n<p>Des T1 de 13 &agrave; 27 m2 avec sanitaires individuels, cuisine collective.</p>",
+        "location": {
+          "lat": 16.252,
+          "lon": -61.543
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": "on_foot"
+          },
+          {
+            "label": "Stationnement urbain gratuit",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "9711243Z",
+        "sector": {
+          "id": "589389fa-0c1c-11e8-89ed-005056940822",
+          "label": "Pointe-à-Pitre - Bergevin"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": "<p>Chambre meubl&eacute;e , douche,Wc,</p>\r\n\r\n<p>Espace collectif :1 cuisine commune par &eacute;tage, laverie,visiophone</p>\r\n\r\n<p>Aides disponibles : ALS</p>",
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1179,
+    "title": "Résidence des Haies",
+    "address": "72-74 rue des Haies 75020 Paris",
+    "lat": 48.85452,
+    "lon": 2.40331,
+    "price": 263.46,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 1179,
+      "medias": [
+        {
+          "src": "1179/5e4514692c364-17-03-crous-loyon-BD-3292.jpg",
+          "description": "Chambre Confort à la Cité U' Beaulieu"
+        },
+        {
+          "src": "1179/5e45146946cbb-17-03-crous-loyon-BD-3304.jpg",
+          "description": "Chambre Confort à la Cité U' Beaulieu"
+        },
+        {
+          "src": "1179/5e4514695d467-17-03-crous-loyon-BD-3333.jpg",
+          "description": "Chambre Confort à la Cité U' Beaulieu"
+        },
+        {
+          "src": "1179/5e45146972a61-17-03-crous-loyon-BD-3344.jpg",
+          "description": "Chambre Confort à la Cité U' Beaulieu"
+        },
+        {
+          "src": "1179/5e4514698a92e-17-03-crous-loyon-BD-3347.jpg",
+          "description": "Chambre Confort à la Cité U' Beaulieu"
+        },
+        {
+          "src": "1179/5e451469a1111-17-03-crous-loyon-BD-3403.jpg",
+          "description": "Chambre Confort à la Cité U' Beaulieu"
+        },
+        {
+          "src": "1179/5e451469b6e6e-17-03-crous-loyon-BD-3411.jpg",
+          "description": "Chambre Confort à la Cité U' Beaulieu"
+        },
+        {
+          "src": "1179/5e451469cdb1f-17-03-crous-loyon-BD-3413.jpg",
+          "description": "Chambre Confort à la Cité U' Beaulieu"
+        },
+        {
+          "src": "1179/60ba1867c7010-Beaulieu bat E - credit Crous juin 2021 (4).jpg",
+          "description": "Hall, Cité U' Beaulieu (bât. E)"
+        }
+      ],
+      "area": {
+        "min": 9.0,
+        "max": 12.0
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 151,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 26346,
+            "max": 26346
+          }
+        }
+      ],
+      "label": "Chambre Confort",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        }
+      ],
+      "residence": {
+        "id": "709136fb-f6ac-11e7-89ed-005056940822",
+        "label": "CU Beaulieu",
+        "address": "9 rue Louis Arretche 35700 Rennes",
+        "code": 8,
+        "medias": [
+          {
+            "src": "709136fb-f6ac-11e7-89ed-005056940822/5e440fb3db4d4-17-03-crous-loyon-BD-3478.jpg",
+            "description": null
+          }
+        ],
+        "description": "<p>R&eacute;sidence r&eacute;nov&eacute;e de 2011 &agrave; 2021, comportant 861 chambres confort, grand confort et &eacute;co-r&eacute;nov&eacute;es, de 9 et 12m&sup2; et 512 studios et studettes de 15 et 20 m&sup2;, situ&eacute;e pr&egrave;s du campus Beaulieu, &agrave; proximit&eacute; de Rennes 1, INSA, IUT, &Eacute;cole de Chimie.</p>\r\n\r\n<p>La r&eacute;sidence est &eacute;quip&eacute;e d&rsquo;une laverie.</p>\r\n\r\n<p>32 logements PMR de 20m&sup2; et de 14m&sup2;.</p>\r\n\r\n<p>Accueil ouvert 24H/24.</p>",
+        "location": {
+          "lat": 48.123,
+          "lon": -1.643
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "Lignes : C1-10-14",
+            "distance": null,
+            "unitOfMeasure": null
+          },
+          {
+            "label": "Métro",
+            "description": "Ligne B station Beaulieu-Université",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "0350921L",
+        "sector": {
+          "id": "4aa431b0-f5e5-11e7-89ed-005056940822",
+          "label": "Rennes"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": "<p>748 Logements</p>\r\n\r\n<p>Chambres confort meubl&eacute;es de 9m&sup2; &eacute;quip&eacute;es d&rsquo;un r&eacute;frig&eacute;rateur, d&rsquo;une salle de bain et d&rsquo;un WC.</p>\r\n\r\n<p>4 chambres confort sont am&eacute;nag&eacute;es pour les personnes &agrave; mobilit&eacute; r&eacute;duite.</p>\r\n\r\n<p>Loyer comprenant l&rsquo;eau, l&rsquo;&eacute;lectricit&eacute;, Internet, les ordures m&eacute;nag&egrave;res et l&rsquo;entretien des parties communes, valable du 1er septembre 2025 au 31 ao&ucirc;t 2026. Logements ouvrant droit aux ALS.</p>\r\n\r\n<p>Montant du d&eacute;p&ocirc;t de garantie : 255,00 &euro;</p>",
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1244,
+    "title": "Résidence Square Bel Air",
+    "address": "1 bis rue de Yelimane  93100 MONTREUIL",
+    "lat": 48.86145,
+    "lon": 2.457917,
+    "price": 439.33,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 400,
+      "medias": [
+        {
+          "src": "400/5ac4f709be5e5-CrousLorraine_RésidenceBridoux_T1bis 1pers 30m².jpg",
+          "description": null
+        }
+      ],
+      "area": {
+        "min": 30.0,
+        "max": 30.0
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 160,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 43933,
+            "max": 43933
+          }
+        }
+      ],
+      "label": "T1Bis",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0912861-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Evier + plaque"
+        }
+      ],
+      "residence": {
+        "id": "11205b58-0a75-11e8-89ed-005056940822",
+        "label": "CU BRIDOUX",
+        "address": "2 rue du Général Delestraint CS 15250 57076 METZ CEDEX 03",
+        "code": 18,
+        "medias": [
+          {
+            "src": "11205b58-0a75-11e8-89ed-005056940822/647d9552d2174-Bridoux1.jpg",
+            "description": null
+          },
+          {
+            "src": "11205b58-0a75-11e8-89ed-005056940822/647d9552dbb89-Bridoux2.jpg",
+            "description": null
+          },
+          {
+            "src": "11205b58-0a75-11e8-89ed-005056940822/647d9552e7a96-Bridoux3.jpg",
+            "description": null
+          }
+        ],
+        "description": "<p>D&eacute;couvrez la r&eacute;sidence universitaire Bridoux, situ&eacute;e dans le secteur de Metz Est qui abrite les facult&eacute;s des Sciences et de STAPS. Avec ses 317 logements, cette r&eacute;sidence offre un cadre pratique et confortable pour les &eacute;tudiants, &agrave; 15 minutes du centre-ville.</p>\r\n\r\n<p>L&#39;un des avantages de la r&eacute;sidence Bridoux est son emplacement &agrave; proximit&eacute; imm&eacute;diate du Resto U&#39; Bridoux, o&ugrave; vous pourrez profiter de repas &eacute;quilibr&eacute;s. Vous b&eacute;n&eacute;ficierez &eacute;galement d&#39;&eacute;quipements modernes et d&#39;espaces communs conviviaux pour rencontrer d&#39;autres &eacute;tudiants. Notre &eacute;quipe est &eacute;galement disponible pour r&eacute;pondre &agrave; vos besoins et rendre votre s&eacute;jour agr&eacute;able.</p>\r\n\r\n<p>En choisissant la r&eacute;sidence universitaire Bridoux, vous profiterez d&rsquo;un cadre historique au sein de cette ancienne caserne militaire enti&egrave;rement r&eacute;am&eacute;nag&eacute;e et modernis&eacute;e pour la vie &eacute;tudiante.<br />\r\nR&eacute;servez d&egrave;s maintenant votre logement &agrave; la r&eacute;sidence universitaire Bridoux et profitez d&#39;un environnement pratique et confortable dans un lieu atypique, &agrave; l&rsquo;architecture remarquable.&nbsp;</p>\r\n\r\n<p><strong>Services :</strong><br />\r\nAccessible PMR / Ascenseur / Distributeur protections p&eacute;riodiques / Douche individuelle / Garages &agrave; v&eacute;los / Internet et Wifi / Kitchenette individuelle / Laverie / Parking / Restauration sur place / Salle de sport / Surveillance et s&eacute;curit&eacute;</p>\r\n\r\n<p><strong>Parking &agrave; ciel ouvert :</strong><br />\r\n5 &euro; par mois selon les possibilit&eacute;s de mise en &oelig;uvre de la r&eacute;sidence.</p>",
+        "location": {
+          "lat": 49.115,
+          "lon": 6.214
+        },
+        "transports": [
+          {
+            "label": "Bus",
+            "description": "",
+            "distance": 3,
+            "unitOfMeasure": "on_foot"
+          },
+          {
+            "label": "Parking privatif",
+            "description": "",
+            "distance": null,
+            "unitOfMeasure": null
+          }
+        ],
+        "uairne": "0573475T",
+        "sector": {
+          "id": "55736b54-01b9-11e8-89ed-005056940822",
+          "label": "Metz -  Technopole / Bridoux"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": null,
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  },
+  {
+    "id": 1264,
+    "title": "Résidence George Sand",
+    "address": "16, Rue André Blanc Lapierre - 91190 Gif-sur-Yvette",
+    "lat": 48.7137,
+    "lon": 2.16683,
+    "price": 328.64,
+    "available": true,
+    "source": "master_list",
+    "data": {
+      "id": 1249,
+      "medias": [
+        {
+          "src": "1249/5a68595e16627-_DSC0595.jpg",
+          "description": "Photo non contractuelle"
+        },
+        {
+          "src": "1249/5a68595e8837d-_DSC0600.jpg",
+          "description": "Photo non contractuelle"
+        }
+      ],
+      "area": {
+        "min": 19.0,
+        "max": 28.48
+      },
+      "bedCount": 1,
+      "bedroomCount": 1,
+      "beds": [
+        {
+          "count": 1,
+          "type": "simple"
+        }
+      ],
+      "roomCount": 1,
+      "bookingData": {
+        "amount": 10000,
+        "free": false
+      },
+      "code": 368,
+      "occupationModes": [
+        {
+          "type": "alone",
+          "rent": {
+            "min": 32864,
+            "max": 42386
+          }
+        }
+      ],
+      "label": "T1",
+      "reference": "2",
+      "studyLevel": {
+        "min": null,
+        "max": null
+      },
+      "equipments": [
+        {
+          "id": "d090e186-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "WC"
+        },
+        {
+          "id": "d0910683-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Douche"
+        },
+        {
+          "id": "d0912861-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Evier + plaque"
+        },
+        {
+          "id": "d0914ae7-fa0e-11e7-89ed-005056940822",
+          "category": "Bâtiment",
+          "label": "Frigo"
+        }
+      ],
+      "residence": {
+        "id": "167d49bd-fd0a-11e7-89ed-005056940822",
+        "label": "RESIDENCE LA LYRE",
+        "address": "207 rue Serge REGGIANI 34090 MONTPELLIER",
+        "code": 15,
+        "medias": [
+          {
+            "src": "167d49bd-fd0a-11e7-89ed-005056940822/5a61d72d3cbb8-_DSC0760.jpg",
+            "description": null
+          },
+          {
+            "src": "167d49bd-fd0a-11e7-89ed-005056940822/5a61d752120d3-_DSC0764.jpg",
+            "description": null
+          }
+        ],
+        "description": "<p>La r&eacute;sidence la Lyre est une r&eacute;sidence construite en 2004. Situ&eacute;e &agrave; proximit&eacute; du parking occitanie &agrave; c&ocirc;t&eacute; de l&rsquo;universit&eacute; de m&eacute;decine et &agrave; 800 m&egrave;tres de l&rsquo;universit&eacute; de Montpellier et du restaurant universitaire du Triolet, elle est desservie par le tramway et le bus. R&eacute;sidence de 496 logements compos&eacute;e d&rsquo;un rez-de-chauss&eacute;e et de 2 &eacute;tages Si vous &ecirc;tes &agrave; la recherche d&#39;un logement aux normes d&#39;accessibilit&eacute;, cliquez<a href=\"http://www.crous-montpellier.fr/wp-content/uploads/sites/20/2014/05/dlna1819.pdf\" target=\"_blank\"> ici</a> pour effectuer votre demande.</p>\r\n\r\n<p>Les logements sont tous &eacute;quip&eacute;s de : lit 1 place, table, chaise, bureau, meuble de rangement, kitchenette avec plaques &eacute;lectriques et r&eacute;frig&eacute;rateur, salle de douche.</p>\r\n\r\n<p>Charges en plus du loyer : Eau chaude, eau froide et &eacute;lectricit&eacute;. Les consommations sont factur&eacute;es sur relev&eacute; de compteurs par la r&eacute;sidence.</p>",
+        "location": {
+          "lat": 43.637,
+          "lon": 3.847
+        },
+        "transports": [
+          {
+            "label": "Tramway",
+            "description": "Tramway ligne 1 : arrêt Occitanie",
+            "distance": 5,
+            "unitOfMeasure": "on_foot"
+          }
+        ],
+        "uairne": "0342162R",
+        "sector": {
+          "id": "abbaba78-1153-11e8-89ed-005056940822",
+          "label": "Montpellier"
+        },
+        "allocationMinimumDuration": 30
+      },
+      "inUnavailabilityPeriod": false,
+      "unavailabilityMessage": null,
+      "description": "<p>Les logements sont tous &eacute;quip&eacute;s de : lit 1 place, table, chaise, bureau, meuble de rangement, kitchenette avec plaques &eacute;lectriques et r&eacute;frig&eacute;rateur, salle de douche.</p>\r\n\r\n<p><strong>Charges en plus du loyer</strong> : Eau chaude, eau froide et &eacute;lectricit&eacute;. Les consommations sont factur&eacute;es sur relev&eacute; de compteurs par la r&eacute;sidence.</p>\r\n\r\n<p>Ce logement peut ouvrir droit &agrave; des prestations de la Caisse d&#39;Allocation Familiale. Pour plus de renseignements, se rendre sur : https://www.caf.fr/.</p>\r\n\r\n<p style=\"margin-left:0cm; margin-right:0cm\"><em><strong>Les montants sont donn&eacute;s &agrave; titre indicatif</strong></em><em><strong>. Ils sont susceptibles d&rsquo;&eacute;voluer sur d&eacute;cision du conseil d&rsquo;administration du Crous.</strong></em></p>",
+      "specialConditions": null,
+      "available": true,
+      "highDemand": false,
+      "lowStock": false,
+      "adaptedPmr": false
+    }
+  }
+]

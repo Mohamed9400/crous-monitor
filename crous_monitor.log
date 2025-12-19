@@ -1,0 +1,190 @@
+[2025-12-18 13:50:06] 🔄 START: Updating CROUS master list
+[2025-12-18 13:50:06] 🔗 Downloading from CROUS API...
+[2025-12-18 13:50:07] 📥 Downloaded 820 total residences
+[2025-12-18 13:50:07] ✅ SUCCESS: Master list updated
+[2025-12-18 13:50:07]    • IDF residences: 153
+[2025-12-18 13:50:07]    • Validated by department: 152
+[2025-12-18 13:50:07]    • Validated by coordinates: 1
+[2025-12-18 13:50:07]    • Rejected (non-IDF): 611
+[2025-12-18 13:50:07]    • Rejected (bounds): 56
+[2025-12-18 13:50:07] 🔍 VERIFIED: All residences have valid IDF postal codes
+[2025-12-18 13:50:07] 💾 Saved to: idf_master_list.json
+[2025-12-18 13:50:07] 🔄 END: Master list update complete
+[2025-12-18 13:57:19] 🚀 Starting CROUS V8 Hybrid Sniper
+[2025-12-18 13:57:23] ============================================================
+[2025-12-18 13:57:23] 🏠 CROUS V8 HYBRID SNIPER - STARTING
+[2025-12-18 13:57:23] ============================================================
+[2025-12-18 13:57:23] 🔍 Fetching search results...
+[2025-12-18 13:57:23] 📊 Found 2 visible listings
+[2025-12-18 13:57:23] 📋 Master list: 153 residences
+[2025-12-18 13:57:23] 📈 Combined: 155 unique residences
+[2025-12-18 13:57:23]    • From search: 2
+[2025-12-18 13:57:23]    • From master list: 155
+[2025-12-18 13:57:23]    • Unique total: 155
+[2025-12-18 13:57:23] ⚡ Auditing 155 candidates...
+[2025-12-18 13:57:47] 📊 Availability results:
+[2025-12-18 13:57:47]    • Available: 46
+[2025-12-18 13:57:47]    • Unavailable: 109
+[2025-12-18 13:57:47]    • From search: 1
+[2025-12-18 13:57:47]    • Hidden gems: 45
+[2025-12-18 13:57:47] ⏱️  Check completed in 24.0 seconds
+[2025-12-18 13:57:47] 📢 Force listing 46 available residences
+[2025-12-18 13:57:47] 📤 Sending 46 FORCED alerts...
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Avia
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Bertelotte
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Mazet
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Hostater
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Castagnary
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Coubertin
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Philippe de Girard 2
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Romy Schneider
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Jourdan
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Bisson
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Pitié-Salpêtrière
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Ménilmontant 1
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Claude Lalet (anciennement Vincent Auriol)
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Amiral Mouchez
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Choisy
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Frères Goncourt
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Domrémy
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Clichy
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Julie Daubié
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence George Sand
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Michel de Bourges
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Nicole Reine Lepaute
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence des Haies
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence du Pré-St-Gervais
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Les Bas Longchamps
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Delphine Seyrig
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Frères Flavien
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Jacqueline Auriol
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Vincent Fayo
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Frida Khalo
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for La Tour de l’Illustration
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Campus
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence l’Hermitage
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Jacqueline de Romilly
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Internationale
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Eugène Pottier
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Le 71
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence de Stains
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Condorcet
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Le Bosquet
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Le Dragueur
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Marguerite Yourcenar
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Les Aunettes
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence Ilôt du Bel Air
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for Résidence de Lieusaint
+[2025-12-18 13:57:47] ⚠️  Failed to send alert for JEAN ZAY
+[2025-12-18 13:57:47] 📊 State updated:
+[2025-12-18 13:57:47]    • Active: 46
+[2025-12-18 13:57:47]    • Ghosts: 109
+[2025-12-18 13:57:47]    • Hidden gems total: 0
+[2025-12-18 13:57:47] ✅ Check completed successfully
+[2025-12-18 13:59:21] 🚀 Starting CROUS V8 Hybrid Sniper
+[2025-12-18 13:59:24] ============================================================
+[2025-12-18 13:59:24] 🏠 CROUS V8 HYBRID SNIPER - STARTING
+[2025-12-18 13:59:24] ============================================================
+[2025-12-18 13:59:24] 🔍 Fetching search results...
+[2025-12-18 13:59:25] 📊 Found 2 visible listings
+[2025-12-18 13:59:25] 📋 Master list: 153 residences
+[2025-12-18 13:59:25] 📈 Combined: 155 unique residences
+[2025-12-18 13:59:25]    • From search: 2
+[2025-12-18 13:59:25]    • From master list: 155
+[2025-12-18 13:59:25]    • Unique total: 155
+[2025-12-18 13:59:25] ⚡ Auditing 155 candidates...
+[2025-12-18 13:59:48] 📊 Availability results:
+[2025-12-18 13:59:48]    • Available: 47
+[2025-12-18 13:59:48]    • Unavailable: 108
+[2025-12-18 13:59:48]    • From search: 1
+[2025-12-18 13:59:48]    • Hidden gems: 46
+[2025-12-18 13:59:48] ⏱️  Check completed in 24.0 seconds
+[2025-12-18 13:59:48] 📢 Ghosts woke up: 1
+[2025-12-18 13:59:48] 📤 Sending 1 WAKE_UP alerts...
+[2025-12-18 13:59:48] ⚠️  Failed to send alert for Résidence Myrha 1
+[2025-12-18 13:59:48] 📊 State updated:
+[2025-12-18 13:59:48]    • Active: 47
+[2025-12-18 13:59:48]    • Ghosts: 108
+[2025-12-18 13:59:48]    • Hidden gems total: 0
+[2025-12-18 13:59:48] ✅ Check completed successfully
+[2025-12-18 14:05:33] 🚀 Starting CROUS V8 Hybrid Sniper
+[2025-12-18 14:05:36] ============================================================
+[2025-12-18 14:05:36] 🏠 CROUS V8 HYBRID SNIPER - STARTING
+[2025-12-18 14:05:36] ============================================================
+[2025-12-18 14:05:36] 🔍 Fetching search results...
+[2025-12-18 14:05:36] 📊 Found 2 visible listings
+[2025-12-18 14:05:36] 📋 Master list: 153 residences
+[2025-12-18 14:05:36] 📈 Combined: 155 unique residences
+[2025-12-18 14:05:36]    • From search: 2
+[2025-12-18 14:05:36]    • From master list: 155
+[2025-12-18 14:05:36]    • Unique total: 155
+[2025-12-18 14:05:36] ⚡ Auditing 155 candidates...
+[2025-12-18 14:06:01] 📊 Availability results:
+[2025-12-18 14:06:01]    • Available: 48
+[2025-12-18 14:06:01]    • Unavailable: 107
+[2025-12-18 14:06:01]    • From search: 1
+[2025-12-18 14:06:01]    • Hidden gems: 47
+[2025-12-18 14:06:01] ⏱️  Check completed in 24.8 seconds
+[2025-12-18 14:06:01] 📢 New drops: 1
+[2025-12-18 14:06:01] 📤 Sending 1 NEW alerts...
+[2025-12-18 14:06:02] 🎯 Hidden gems found: 47
+[2025-12-18 14:06:02] 📤 Sending 47 HIDDEN_GEM alerts...
+[2025-12-18 14:06:41] 📊 State updated:
+[2025-12-18 14:06:41]    • Active: 48
+[2025-12-18 14:06:41]    • Ghosts: 107
+[2025-12-18 14:06:41]    • Hidden gems total: 47
+[2025-12-18 14:06:42] ✅ Check completed successfully
+[2025-12-18 14:48:32] 🔄 START: Updating CROUS master list (NEW STRATEGY)
+[2025-12-18 14:48:32] 🔗 Fetching coordinates from CROUS API...
+[2025-12-18 14:48:33] 📥 Downloaded 820 total residences
+[2025-12-18 14:48:33] 📍 IDF candidates found: 116
+[2025-12-18 14:48:33] 🔍 Fetching details for 116 IDF residences...
+[2025-12-18 14:48:36]    Processed 20/116...
+[2025-12-18 14:48:36]    Processed 40/116...
+[2025-12-18 14:48:37]    Processed 60/116...
+[2025-12-18 14:48:37]    Processed 80/116...
+[2025-12-18 14:48:37]    Processed 100/116...
+[2025-12-18 14:48:37] ✅ SUCCESS: Master list updated
+[2025-12-18 14:48:37]    • Total IDF residences checked: 116
+[2025-12-18 14:48:37]    • Bookable (with price): 16
+[2025-12-18 14:48:37]    • Not available: 98
+[2025-12-18 14:48:37]    • Available but no price: 2
+[2025-12-18 14:48:37]    • Errors: 0
+[2025-12-18 14:48:37] 💾 Saved 16 bookable residences to: idf_master_list.json
+[2025-12-18 14:48:37] 🔄 END: Master list update complete
+[2025-12-18 14:48:56] 🚀 Starting CROUS V8 Hybrid Sniper
+[2025-12-18 14:48:59] ============================================================
+[2025-12-18 14:48:59] 🏠 CROUS V8 HYBRID SNIPER - STARTING
+[2025-12-18 14:48:59] ============================================================
+[2025-12-18 14:48:59] 🔍 Fetching search results...
+[2025-12-18 14:48:59] 📊 Found 2 visible listings
+[2025-12-18 14:48:59] 📋 Master list: 16 residences
+[2025-12-18 14:48:59] 📈 Combined: 18 unique residences
+[2025-12-18 14:48:59]    • From search: 2
+[2025-12-18 14:48:59]    • From master list: 18
+[2025-12-18 14:48:59]    • Unique total: 18
+[2025-12-18 14:48:59] ⚡ Auditing 18 candidates...
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 604: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1583: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 397: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 400: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 406: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1124: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1144: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1150: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1152: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1154: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1158: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1164: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1169: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1174: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1176: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1179: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1244: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] ⚠️  Error processing candidate 1264: name 'get_stats_from_data' is not defined
+[2025-12-18 14:49:00] 📊 Availability results:
+[2025-12-18 14:49:00]    • Available: 0
+[2025-12-18 14:49:00]    • Unavailable: 0
+[2025-12-18 14:49:00]    • From search: 0
+[2025-12-18 14:49:00]    • Hidden gems: 0
+[2025-12-18 14:49:00] ⏱️  Check completed in 1.6 seconds

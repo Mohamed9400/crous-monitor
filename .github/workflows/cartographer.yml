@@ -1,0 +1,36 @@
+name: Update Master List
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'  # Every 12 hours at minute 0
+  workflow_dispatch:        # Manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  cartographer:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install dependencies
+        run: pip install requests
+      
+      - name: Update Master List
+        run: python update_master_list.py
+      
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "CROUS Bot"
+          git config --global user.email "bot@noreply.github.com"
+          git add idf_master_list.json crous_monitor.log
+          git commit -m "🔄 Update master list [skip ci]" || echo "No changes to commit"
+          git push
